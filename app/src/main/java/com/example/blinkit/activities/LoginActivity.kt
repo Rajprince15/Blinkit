@@ -9,10 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.blinkit.R
 import com.example.blinkit.databinding.ActivityLoginBinding
-import com.example.blinkit.models.LoginRequest
 import com.example.blinkit.utils.SharedPrefsManager
 import com.example.blinkit.viewmodels.AuthViewModel
 
+/**
+ * LoginActivity - User login screen
+ * Token is saved after successful login and automatically used by ApiClient interceptor
+ */
 class LoginActivity : AppCompatActivity() {
     
     private lateinit var binding: ActivityLoginBinding
@@ -82,14 +85,13 @@ class LoginActivity : AppCompatActivity() {
     }
     
     private fun performLogin(email: String, password: String) {
-        val loginRequest = LoginRequest(email, password)
-        authViewModel.login(loginRequest)
+        authViewModel.login(email, password)
     }
     
     private fun observeViewModel() {
         authViewModel.loginResult.observe(this) { result ->
             result.onSuccess { response ->
-                // Save token
+                // Save token to SharedPreferences
                 SharedPrefsManager.saveToken(this, response.token)
                 
                 // Show success message
@@ -110,6 +112,8 @@ class LoginActivity : AppCompatActivity() {
         authViewModel.loading.observe(this) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             binding.btnLogin.isEnabled = !isLoading
+            binding.etEmail.isEnabled = !isLoading
+            binding.etPassword.isEnabled = !isLoading
         }
     }
 }

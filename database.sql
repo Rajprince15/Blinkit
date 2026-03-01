@@ -2,7 +2,6 @@
 -- Blinkit-Style Grocery Delivery App - MySQL 8.0 Database Schema
 -- ============================================================================
 -- Database: blinkit_db
--- Author: E1 Agent
 -- Created: 2025-08-15
 -- Description: Complete normalized database schema for grocery delivery application
 -- ============================================================================

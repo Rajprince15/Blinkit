@@ -105,8 +105,3 @@ class CartViewModel : ViewModel() {
 
 
 
-I still need to check and update:
-
-ViewModels - Remove token parameters from repository calls
-Activities - Update any old code still passing tokens manually
-Verify API response models match between backend and Android

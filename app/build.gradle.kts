@@ -36,7 +36,7 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
-        compose = true
+
         viewBinding = true
     }
 }
@@ -75,10 +75,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
 
-    // Jetpack Compose
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.activity.compose)
+
 
     // Testing
     testImplementation(libs.junit)

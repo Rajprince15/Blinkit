@@ -6,9 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.blinkit.databinding.ActivityAddEditAddressBinding
 import com.example.blinkit.models.Address
-import com.example.blinkit.utils.SharedPrefsManager
 import com.example.blinkit.viewmodels.AddressViewModel
+import com.google.gson.Gson
 
+/**
+ * AddEditAddressActivity - Add or edit delivery address
+ * Token is automatically injected by ApiClient interceptor
+ */
 class AddEditAddressActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddEditAddressBinding
     private lateinit var viewModel: AddressViewModel
@@ -21,29 +25,32 @@ class AddEditAddressActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[AddressViewModel::class.java]
 
-        // check if we're editing
+        // Check if we're editing an existing address
         intent.getStringExtra("address_json")?.let { json ->
-            editingAddress = com.google.gson.Gson().fromJson(json, Address::class.java)
+            editingAddress = Gson().fromJson(json, Address::class.java)
             populateFields()
         }
 
+        setupClickListeners()
+        observeViewModel()
+    }
+
+    private fun setupClickListeners() {
         binding.btnSave.setOnClickListener {
             saveAddress()
         }
-
-        observe()
     }
 
     private fun populateFields() {
-        editingAddress?.let { addr ->
-            binding.etName.setText(addr.fullName)
-            binding.etLine1.setText(addr.addressLine1)
-            binding.etLine2.setText(addr.addressLine2)
-            binding.etCity.setText(addr.city)
-            binding.etState.setText(addr.state)
-            binding.etZipcode.setText(addr.pincode)
-            binding.etCountry.setText("India")
-            binding.cbDefault.isChecked = addr.isDefault
+        editingAddress?.let { address ->
+            binding.etName.setText(address.fullName)
+            binding.etLine1.setText(address.addressLine1)
+            binding.etLine2.setText(address.addressLine2 ?: "")
+            binding.etCity.setText(address.city)
+            binding.etState.setText(address.state)
+            binding.etZipcode.setText(address.pincode)
+            binding.etCountry.setText(address.country ?: "India")
+            binding.cbDefault.isChecked = address.isDefault
         }
     }
 
@@ -57,26 +64,28 @@ class AddEditAddressActivity : AppCompatActivity() {
         val country = binding.etCountry.text.toString().trim()
         val isDefault = binding.cbDefault.isChecked
 
+        // Validate required fields
         if (name.isEmpty() || line1.isEmpty() || city.isEmpty() || state.isEmpty() || zipcode.isEmpty()) {
-            Toast.makeText(this, "Please fill required fields", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Please fill all required fields", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val token = getToken()
         if (editingAddress != null) {
-            val addr = editingAddress!!.copy(
+            // Update existing address
+            val updatedAddress = editingAddress!!.copy(
                 fullName = name,
                 addressLine1 = line1,
-                addressLine2 = line2,
+                addressLine2 = if (line2.isEmpty()) null else line2,
                 city = city,
                 state = state,
                 pincode = zipcode,
                 country = country,
                 isDefault = isDefault
             )
-            viewModel.updateAddress(token, addr.id, addr)
+            viewModel.updateAddress(updatedAddress.id, updatedAddress)
         } else {
-            val newAddr = Address(
+            // Add new address
+            val newAddress = Address(
                 id = 0,
                 userId = 0,
                 fullName = name,
@@ -86,24 +95,27 @@ class AddEditAddressActivity : AppCompatActivity() {
                 city = city,
                 state = state,
                 pincode = zipcode,
+                country = country,
                 addressType = Address.AddressType.HOME,
                 isDefault = isDefault
             )
-            viewModel.addAddress(token, newAddr)
+            viewModel.addAddress(newAddress)
         }
     }
 
-    private fun observe() {
-        viewModel.operationResult.observe(this) { res ->
-            res.onSuccess {
-                Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show()
+    private fun observeViewModel() {
+        viewModel.operationResult.observe(this) { result ->
+            result.onSuccess {
+                Toast.makeText(this, "Address saved successfully", Toast.LENGTH_SHORT).show()
                 finish()
             }
-            res.onFailure { err ->
-                Toast.makeText(this, err.message ?: "Error saving", Toast.LENGTH_SHORT).show()
+            result.onFailure { error ->
+                Toast.makeText(this, error.message ?: "Error saving address", Toast.LENGTH_SHORT).show()
             }
         }
-    }
 
-    private fun getToken(): String = SharedPrefsManager.getToken(this) ?: ""
+        viewModel.loading.observe(this) { isLoading ->
+            binding.btnSave.isEnabled = !isLoading
+        }
+    }
 }

@@ -6,14 +6,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.blinkit.R
 import com.example.blinkit.adapters.CartAdapter
 import com.example.blinkit.databinding.ActivityCartBinding
-import com.example.blinkit.models.CartItem
-import com.example.blinkit.models.UpdateCartRequest
-import com.example.blinkit.utils.SharedPrefsManager
 import com.example.blinkit.viewmodels.CartViewModel
 
+/**
+ * CartActivity - Displays user's shopping cart
+ * Token is automatically injected by ApiClient interceptor
+ */
 class CartActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCartBinding
     private lateinit var cartViewModel: CartViewModel
@@ -28,7 +28,6 @@ class CartActivity : AppCompatActivity() {
 
         setupRecycler()
         observeViewModel()
-
         loadCart()
 
         binding.btnCheckout.setOnClickListener {
@@ -37,11 +36,15 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupRecycler() {
-        cartAdapter = CartAdapter(mutableListOf(), onQuantityChanged = { item, qty ->
-            cartViewModel.updateCartItem(getToken(), item.id, qty)
-        }, onRemove = { item ->
-            cartViewModel.removeCartItem(getToken(), item.id)
-        })
+        cartAdapter = CartAdapter(
+            mutableListOf(), 
+            onQuantityChanged = { item, qty ->
+                cartViewModel.updateCartItem(item.id, qty)
+            }, 
+            onRemove = { item ->
+                cartViewModel.removeCartItem(item.id)
+            }
+        )
         binding.rvCart.apply {
             layoutManager = LinearLayoutManager(this@CartActivity)
             adapter = cartAdapter
@@ -60,16 +63,13 @@ class CartActivity : AppCompatActivity() {
                 Toast.makeText(this, error.message ?: "Failed to load cart", Toast.LENGTH_LONG).show()
             }
         }
+        
         cartViewModel.loading.observe(this) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
     }
 
     private fun loadCart() {
-        cartViewModel.loadCart(getToken())
-    }
-
-    private fun getToken(): String {
-        return SharedPrefsManager.getToken(this) ?: ""
+        cartViewModel.loadCart()
     }
 }

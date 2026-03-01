@@ -33,6 +33,9 @@ data class Address(
     @SerializedName("pincode")
     val pincode: String,
     
+    @SerializedName("country")
+    val country: String? = "India",
+    
     @SerializedName("address_type")
     val addressType: AddressType = AddressType.HOME,
     
@@ -58,6 +61,10 @@ data class Address(
             append(state)
             append(" - ")
             append(pincode)
+            if (!country.isNullOrBlank()) {
+                append(", ")
+                append(country)
+            }
         }
     }
     

@@ -1,29 +1,29 @@
-"package com.example.blinkit.activities
+package com.example.blinkit.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import com.example.blinkit.databinding.ActivityProfileBinding
 import com.example.blinkit.utils.SharedPrefsManager
 import com.example.blinkit.utils.ThemeManager
 import com.example.blinkit.viewmodels.AuthViewModel
 
+/**
+ * ProfileActivity - User profile and settings screen
+ * Token is automatically injected by ApiClient interceptor
+ */
 class ProfileActivity : AppCompatActivity() {
     
     private lateinit var binding: ActivityProfileBinding
     private lateinit var authViewModel: AuthViewModel
-    private lateinit var sharedPrefsManager: SharedPrefsManager
-   
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
-        sharedPrefsManager = SharedPrefsManager.getInstance(this)
 
         setupToolbar()
         setupViewModel()
@@ -39,14 +39,17 @@ class ProfileActivity : AppCompatActivity() {
     private fun setupViewModel() {
         authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
         
-        authViewModel.user.observe(this) { user ->
-            user?.let {
-                binding.tvUserName.text = it.name
-                binding.tvUserEmail.text = it.email
+        authViewModel.profileResult.observe(this) { result ->
+            result.onSuccess { user ->
+                binding.tvUserName.text = user.name
+                binding.tvUserEmail.text = user.email
                 
                 // Set avatar initial
-                val initial = it.name.firstOrNull()?.uppercase() ?: \"U\"
+                val initial = user.name.firstOrNull()?.uppercase() ?: "U"
                 binding.tvAvatarInitial.text = initial
+            }
+            result.onFailure { error ->
+                Toast.makeText(this, error.message ?: "Failed to load profile", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -55,6 +58,7 @@ class ProfileActivity : AppCompatActivity() {
         // Edit Profile
         binding.btnEditProfile.setOnClickListener {
             // TODO: Navigate to edit profile screen
+            Toast.makeText(this, "Edit profile coming soon", Toast.LENGTH_SHORT).show()
         }
         
         // My Orders
@@ -79,7 +83,7 @@ class ProfileActivity : AppCompatActivity() {
     }
     
     private fun loadUserProfile() {
-        authViewModel.getUserProfile()
+        authViewModel.getProfile()
     }
     
     private fun setupThemeSwitch() {
@@ -88,7 +92,7 @@ class ProfileActivity : AppCompatActivity() {
         
         // Handle theme toggle
         binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
-            sharedPrefsManager.saveTheme(isChecked)
+            SharedPrefsManager.saveTheme(this, isChecked)
             ThemeManager.applyTheme(this)
             recreate() // Recreate activity to apply theme
         }
@@ -96,8 +100,8 @@ class ProfileActivity : AppCompatActivity() {
     
     private fun showAboutDialog() {
         AlertDialog.Builder(this)
-            .setTitle(\"About Blinkit Clone\")
-            .setMessage(\"\"\"
+            .setTitle("About Blinkit Clone")
+            .setMessage("""
                 Blinkit Clone - Grocery Delivery App
                 
                 Version: 1.0.0
@@ -109,25 +113,25 @@ class ProfileActivity : AppCompatActivity() {
                 • Retrofit & Glide
                 
                 © 2025 Blinkit Clone. All rights reserved.
-            \"\"\".trimIndent())
-            .setPositiveButton(\"OK\", null)
+            """.trimIndent())
+            .setPositiveButton("OK", null)
             .show()
     }
     
     private fun showLogoutDialog() {
         AlertDialog.Builder(this)
-            .setTitle(\"Logout\")
-            .setMessage(\"Are you sure you want to logout?\")
-            .setPositiveButton(\"Logout\") { _, _ ->
-                logout()
+            .setTitle("Logout")
+            .setMessage("Are you sure you want to logout?")
+            .setPositiveButton("Logout") { _, _ ->
+                performLogout()
             }
-            .setNegativeButton(\"Cancel\", null)
+            .setNegativeButton("Cancel", null)
             .show()
     }
     
-    private fun logout() {
+    private fun performLogout() {
         // Clear user session
-        sharedPrefsManager.clearToken()
+        SharedPrefsManager.clearToken(this)
         
         // Navigate to login screen
         val intent = Intent(this, LoginActivity::class.java)
@@ -136,4 +140,3 @@ class ProfileActivity : AppCompatActivity() {
         finish()
     }
 }
-"

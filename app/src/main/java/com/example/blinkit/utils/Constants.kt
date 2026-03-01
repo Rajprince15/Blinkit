@@ -8,7 +8,7 @@ object Constants {
     // Base URL for API calls
     // For emulator use: http://10.0.2.2:5000/api/
     // For physical device use: http://YOUR_IP:5000/api/
-    const val BASE_URL = "http://10.0.2.2:5000/api/"
+    const val BASE_URL = "http://10.52.229.9:5000/api/"
 
     // API Endpoints
     const val ENDPOINT_SIGNUP = "auth/signup"

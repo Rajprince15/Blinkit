@@ -10,9 +10,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.blinkit.adapters.AddressAdapter
 import com.example.blinkit.databinding.ActivityAddressListBinding
 import com.example.blinkit.models.Address
-import com.example.blinkit.utils.SharedPrefsManager
 import com.example.blinkit.viewmodels.AddressViewModel
+import com.google.gson.Gson
 
+/**
+ * AddressListActivity - Displays list of saved addresses
+ * Token is automatically injected by ApiClient interceptor
+ */
 class AddressListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddressListBinding
     private lateinit var viewModel: AddressViewModel
@@ -24,66 +28,78 @@ class AddressListActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         viewModel = ViewModelProvider(this)[AddressViewModel::class.java]
-        adapter = AddressAdapter(mutableListOf(),
-            onEdit = { addr -> openEdit(addr) },
-            onDelete = { addr -> deleteAddress(addr) },
-            onSetDefault = { addr -> setDefault(addr) }
-        )
-        binding.rvAddresses.layoutManager = LinearLayoutManager(this)
-        binding.rvAddresses.adapter = adapter
-
-        binding.fabAdd.setOnClickListener {
-            startActivity(Intent(this, AddEditAddressActivity::class.java))
-        }
-
-        observe()
-        loadData()
+        
+        setupRecyclerView()
+        setupClickListeners()
+        observeViewModel()
+        loadAddresses()
     }
 
     override fun onResume() {
         super.onResume()
-        loadData()
+        loadAddresses()
     }
 
-    private fun observe() {
+    private fun setupRecyclerView() {
+        adapter = AddressAdapter(
+            mutableListOf(),
+            onEdit = { address -> openEditAddress(address) },
+            onDelete = { address -> deleteAddress(address) },
+            onSetDefault = { address -> setDefaultAddress(address) }
+        )
+        binding.rvAddresses.apply {
+            layoutManager = LinearLayoutManager(this@AddressListActivity)
+            adapter = this@AddressListActivity.adapter
+        }
+    }
+
+    private fun setupClickListeners() {
+        binding.fabAdd.setOnClickListener {
+            startActivity(Intent(this, AddEditAddressActivity::class.java))
+        }
+    }
+
+    private fun observeViewModel() {
         viewModel.addresses.observe(this) { result ->
-            result.onSuccess { list ->
-                adapter.updateData(list)
-                binding.rvAddresses.visibility = if (list.isEmpty()) View.GONE else View.VISIBLE
+            result.onSuccess { addressList ->
+                adapter.updateData(addressList)
+                binding.rvAddresses.visibility = if (addressList.isEmpty()) View.GONE else View.VISIBLE
             }
-            result.onFailure { err ->
-                Toast.makeText(this, err.message ?: "Failed to load", Toast.LENGTH_SHORT).show()
+            result.onFailure { error ->
+                Toast.makeText(this, error.message ?: "Failed to load addresses", Toast.LENGTH_SHORT).show()
             }
         }
-        viewModel.operationResult.observe(this) { res ->
-            res.onSuccess {
-                Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+        
+        viewModel.operationResult.observe(this) { result ->
+            result.onSuccess {
+                Toast.makeText(this, "Operation successful", Toast.LENGTH_SHORT).show()
             }
-            res.onFailure { err ->
-                Toast.makeText(this, err.message ?: "Error", Toast.LENGTH_SHORT).show()
+            result.onFailure { error ->
+                Toast.makeText(this, error.message ?: "Operation failed", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        viewModel.loading.observe(this) { isLoading ->
+            // Handle loading state if needed
         }
     }
 
-    private fun loadData() {
-        viewModel.loadAddresses(getToken())
+    private fun loadAddresses() {
+        viewModel.loadAddresses()
     }
 
-    private fun getToken(): String = SharedPrefsManager.getToken(this) ?: ""
-
-    private fun openEdit(address: Address) {
+    private fun openEditAddress(address: Address) {
         val intent = Intent(this, AddEditAddressActivity::class.java)
-        // serialize address to JSON
-        val json = com.google.gson.Gson().toJson(address)
+        val json = Gson().toJson(address)
         intent.putExtra("address_json", json)
         startActivity(intent)
     }
 
     private fun deleteAddress(address: Address) {
-        viewModel.deleteAddress(getToken(), address.id)
+        viewModel.deleteAddress(address.id)
     }
 
-    private fun setDefault(address: Address) {
-        viewModel.setDefault(getToken(), address.id)
+    private fun setDefaultAddress(address: Address) {
+        viewModel.setDefault(address.id)
     }
 }
