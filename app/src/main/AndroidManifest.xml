@@ -55,8 +55,12 @@
         <activity
             android:name=\".activities.ProductDetailActivity\"
             android:exported=\"false\"
-            android:parentActivityName=\".activities.HomeActivity\" />
-        
+            android:parentActivityName=\".activities.HomeActivity\" />        
+        <!-- Cart Activity -->
+        <activity
+            android:name=".activities.CartActivity"
+            android:exported="false"
+            android:parentActivityName=".activities.HomeActivity" />        
         <!-- Search Activity -->
         <activity
             android:name=\".activities.SearchActivity\"

@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName
  * Add to cart request
  */
 data class AddToCartRequest(
-    @SerializedName("productId")
+    @SerializedName("product_id")
     val productId: Int,
     
     @SerializedName("quantity")
@@ -38,7 +38,7 @@ data class CartSummary(
     @SerializedName("delivery_fee")
     val deliveryFee: Double,
     
-    @SerializedName("total")
+    @SerializedName("total_amount")
     val total: Double,
     
     @SerializedName("item_count")

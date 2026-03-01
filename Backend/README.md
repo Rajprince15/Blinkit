@@ -319,10 +319,35 @@ npm install
 
 ## Next Steps
 
-Phase 1 Complete! Next:
-- Phase 2: Add product APIs (categories, products, search)
-- Phase 3: Implement cart functionality
-- Phase 4: Add order management
+Phase 1 & 2 Complete! Phase 3 & 4 work has been started and APIs added below.
+
+### New APIs (Phase 3/4)
+
+- **Cart**
+  - `GET /api/cart` (auth) – get current user cart with item details and summary
+  - `POST /api/cart/add` (auth) – add item or increment existing quantity
+  - `PUT /api/cart/update/:cartItemId` (auth) – change quantity
+  - `DELETE /api/cart/remove/:cartItemId` (auth) – remove single item
+  - `DELETE /api/cart/clear` (auth) – empty user's cart
+
+- **Addresses**
+  - `GET /api/addresses` (auth) – list saved delivery addresses
+  - `POST /api/addresses` (auth) – add a new address
+  - `PUT /api/addresses/:addressId` (auth) – update address
+  - `DELETE /api/addresses/:addressId` (auth) – delete address
+  - `PUT /api/addresses/:addressId/default` (auth) – set a default address
+
+- **Orders**
+  - `POST /api/orders/create` (auth) – place a new order from cart/items
+  - `GET /api/orders` (auth) – fetch order history
+  - `GET /api/orders/:orderId` (auth) – get specific order with items
+  - `GET /api/orders/:orderId/track` (auth) – timeline of status updates
+
+Feel free to use the SQL samples to exercise these endpoints.
+
+---
+
+**Developed by E1 Agent**
 
 ---
 
