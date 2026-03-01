@@ -6,9 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blinkit.models.*
 import com.example.blinkit.repositories.OrderRepository
-import com.example.blinkit.utils.SharedPrefsManager
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for order operations
+ * Token is automatically injected by ApiClient interceptor
+ */
 class OrderViewModel : ViewModel() {
     private val repo = OrderRepository()
 
@@ -40,17 +43,14 @@ class OrderViewModel : ViewModel() {
                     val api = resp.body()!!
                     if (api.success && api.data != null) {
                         _orders.value = api.data
-
                     } else {
                         _error.value = api.message ?: "Failed to load orders"
-
                     }
                 } else {
                     _error.value = "Network error: ${resp.message()}"
-
                 }
             } catch (e: Exception) {
-                error.value = e.message ?: "An error occurred"
+                _error.value = e.message ?: "An error occurred"
             } finally {
                 _isLoading.value = false
             }
@@ -66,7 +66,9 @@ class OrderViewModel : ViewModel() {
                 if (resp.isSuccessful && resp.body() != null) {
                     val api = resp.body()!!
                     if (api.success && api.data != null) {
-                        _currentOrder.value = api.data.order
+                        // Merge items into order object for easy access
+                        val orderWithItems = api.data.order.copy(items = api.data.items)
+                        _currentOrder.value = orderWithItems
                     } else {
                         _error.value = api.message ?: "Failed to load order"
                     }
@@ -108,6 +110,7 @@ class OrderViewModel : ViewModel() {
     fun trackOrder(orderId: Int) {
         viewModelScope.launch {
             try {
+                _isLoading.value = true
                 _error.value = null
                 val resp = repo.trackOrder(orderId)
                 if (resp.isSuccessful && resp.body() != null) {
@@ -121,9 +124,9 @@ class OrderViewModel : ViewModel() {
                     _error.value = "Network error: ${resp.message()}"
                 }
             } catch (e: Exception) {
-                _tracking.value = Result.failure(e)
-            } finally {
                 _error.value = e.message ?: "An error occurred"
+            } finally {
+                _isLoading.value = false
             }
         }
     }

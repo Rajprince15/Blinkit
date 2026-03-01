@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".BlinkitApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -45,17 +46,40 @@
         <activity
             android:name=".activities.HomeActivity"
             android:exported="false" />
+
+        <!-- Main Container Activity with Bottom Navigation -->
+        <activity
+            android:name=".activities.MainContainerActivity"
+            android:exported="false" />
+        
+        <!-- Order Tracking Activity -->
+        <activity
+            android:name=".activities.OrderTrackingActivity"
+            android:exported="false"
+            android:parentActivityName=".activities.HomeActivity" />
+        
+        <!-- Order History Activity -->
+        <activity
+            android:name=".activities.OrderHistoryActivity"
+            android:exported="false"
+            android:parentActivityName=".activities.ProfileActivity" />
+        
+        <!-- Profile Activity -->
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:exported="false"
+            android:parentActivityName=".activities.HomeActivity" />
         <!-- Product List Activity -->
         <activity
-            android:name=\".activities.ProductListActivity\"
-            android:exported=\"false\"
-            android:parentActivityName=\".activities.HomeActivity\" />
+            android:name=".activities.ProductListActivity"
+            android:exported="false"
+            android:parentActivityName=".activities.HomeActivity" />
         
         <!-- Product Detail Activity -->
         <activity
-            android:name=\".activities.ProductDetailActivity\"
-            android:exported=\"false\"
-            android:parentActivityName=\".activities.HomeActivity\" />        
+            android:name=".activities.ProductDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".activities.HomeActivity" />        
         <!-- Cart Activity -->
         <activity
             android:name=".activities.CartActivity"
@@ -63,10 +87,10 @@
             android:parentActivityName=".activities.HomeActivity" />        
         <!-- Search Activity -->
         <activity
-            android:name=\".activities.SearchActivity\"
-            android:exported=\"false\"
-            android:windowSoftInputMode=\"adjustResize\"
-            android:parentActivityName=\".activities.HomeActivity\" />
+            android:name=".activities.SearchActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:parentActivityName=".activities.HomeActivity" />
         
         <!-- Old MainActivity (keeping for reference) -->
         <activity

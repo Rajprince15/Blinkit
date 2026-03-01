@@ -8,6 +8,10 @@ import com.example.blinkit.models.*
 import com.example.blinkit.repositories.CartRepository
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for cart operations
+ * Token is automatically injected by ApiClient interceptor
+ */
 class CartViewModel : ViewModel() {
     private val repo = CartRepository()
 
@@ -17,11 +21,11 @@ class CartViewModel : ViewModel() {
     private val _loading = MutableLiveData<Boolean>(false)
     val loading: LiveData<Boolean> = _loading
 
-    fun loadCart(token: String) {
+    fun loadCart() {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                val response = repo.getCart(token)
+                val response = repo.getCart()
                 if (response.isSuccessful && response.body() != null) {
                     val api = response.body()!!
                     if (api.success && api.data != null) {
@@ -40,13 +44,13 @@ class CartViewModel : ViewModel() {
         }
     }
 
-    fun addToCart(token: String, request: AddToCartRequest) {
+    fun addToCart(request: AddToCartRequest) {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                repo.addToCart(token, request)
+                repo.addToCart(request)
                 // reload after modification
-                loadCart(token)
+                loadCart()
             } catch (_: Exception) {
             } finally {
                 _loading.value = false
@@ -54,12 +58,12 @@ class CartViewModel : ViewModel() {
         }
     }
 
-    fun updateCartItem(token: String, cartItemId: Int, qty: Int) {
+    fun updateCartItem(cartItemId: Int, qty: Int) {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                repo.updateCartItem(token, cartItemId, UpdateCartRequest(qty))
-                loadCart(token)
+                repo.updateCartItem(cartItemId, UpdateCartRequest(qty))
+                loadCart()
             } catch (_: Exception) {
             } finally {
                 _loading.value = false
@@ -67,12 +71,12 @@ class CartViewModel : ViewModel() {
         }
     }
 
-    fun removeCartItem(token: String, cartItemId: Int) {
+    fun removeCartItem(cartItemId: Int) {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                repo.removeCartItem(token, cartItemId)
-                loadCart(token)
+                repo.removeCartItem(cartItemId)
+                loadCart()
             } catch (_: Exception) {
             } finally {
                 _loading.value = false
@@ -80,12 +84,12 @@ class CartViewModel : ViewModel() {
         }
     }
 
-    fun clearCart(token: String) {
+    fun clearCart() {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                repo.clearCart(token)
-                loadCart(token)
+                repo.clearCart()
+                loadCart()
             } catch (_: Exception) {
             } finally {
                 _loading.value = false
@@ -93,3 +97,16 @@ class CartViewModel : ViewModel() {
         }
     }
 }
+
+
+
+
+
+
+
+
+I still need to check and update:
+
+ViewModels - Remove token parameters from repository calls
+Activities - Update any old code still passing tokens manually
+Verify API response models match between backend and Android

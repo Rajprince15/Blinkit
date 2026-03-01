@@ -6,6 +6,7 @@ import com.example.blinkit.models.SignupRequest
 
 /**
  * Repository for authentication operations
+ * Auth token is automatically injected by ApiClient interceptor for profile/logout
  */
 class AuthRepository {
 
@@ -26,12 +27,10 @@ class AuthRepository {
     /**
      * Get user profile
      */
-    suspend fun getProfile(token: String) =
-        apiService.getProfile("Bearer $token")
+    suspend fun getProfile() = apiService.getProfile()
 
     /**
      * Logout user
      */
-    suspend fun logout(token: String) =
-        apiService.logout("Bearer $token")
+    suspend fun logout() = apiService.logout()
 }

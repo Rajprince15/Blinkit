@@ -18,10 +18,10 @@ interface ApiService {
     suspend fun login(@Body request: LoginRequest): Response<ApiResponse<AuthResponse>>
 
     @GET("auth/profile")
-    suspend fun getProfile(@Header("Authorization") token: String): Response<ApiResponse<User>>
+    suspend fun getProfile(): Response<ApiResponse<User>>
 
     @POST("auth/logout")
-    suspend fun logout(@Header("Authorization") token: String): Response<ApiResponse<Any>>
+    suspend fun logout(): Response<ApiResponse<Any>>
 
     // ============ Category APIs ============
 
@@ -64,80 +64,56 @@ interface ApiService {
     // ============ Cart APIs ============
 
     @GET("cart")
-    suspend fun getCart(@Header("Authorization") token: String): Response<ApiResponse<CartSummary>>
+    suspend fun getCart(): Response<ApiResponse<CartSummary>>
 
     @POST("cart/add")
-    suspend fun addToCart(
-        @Header("Authorization") token: String,
-        @Body request: AddToCartRequest
-    ): Response<ApiResponse<CartItemResponse>>
+    suspend fun addToCart(@Body request: AddToCartRequest): Response<ApiResponse<CartItemResponse>>
 
     @PUT("cart/update/{cartItemId}")
     suspend fun updateCartItem(
-        @Header("Authorization") token: String,
+        
         @Path("cartItemId") cartItemId: Int,
         @Body request: UpdateCartRequest
     ): Response<ApiResponse<Any>>
 
     @DELETE("cart/remove/{cartItemId}")
-    suspend fun removeCartItem(
-        @Header("Authorization") token: String,
-        @Path("cartItemId") cartItemId: Int
-    ): Response<ApiResponse<Any>>
+    suspend fun removeCartItem(@Path("cartItemId") cartItemId: Int): Response<ApiResponse<Any>>
 
     @DELETE("cart/clear")
-    suspend fun clearCart(@Header("Authorization") token: String): Response<ApiResponse<Any>>
+    suspend fun clearCart(): Response<ApiResponse<Any>>
 
     // ============ Address APIs ============
 
     @GET("addresses")
-    suspend fun getAddresses(@Header("Authorization") token: String): Response<ApiResponse<List<Address>>>
+    suspend fun getAddresses(): Response<ApiResponse<List<Address>>>
 
     @POST("addresses")
-    suspend fun addAddress(
-        @Header("Authorization") token: String,
-        @Body address: Address
-    ): Response<ApiResponse<Any>>
+    suspend fun addAddress(@Body address: Address): Response<ApiResponse<Any>>
 
     @PUT("addresses/{addressId}")
     suspend fun updateAddress(
-        @Header("Authorization") token: String,
+        
         @Path("addressId") addressId: Int,
         @Body address: Address
     ): Response<ApiResponse<Any>>
 
     @DELETE("addresses/{addressId}")
-    suspend fun deleteAddress(
-        @Header("Authorization") token: String,
-        @Path("addressId") addressId: Int
-    ): Response<ApiResponse<Any>>
+    suspend fun deleteAddress(@Path("addressId") addressId: Int): Response<ApiResponse<Any>>
 
     @PUT("addresses/{addressId}/default")
-    suspend fun setDefaultAddress(
-        @Header("Authorization") token: String,
-        @Path("addressId") addressId: Int
-    ): Response<ApiResponse<Any>>
+    suspend fun setDefaultAddress(@Path("addressId") addressId: Int): Response<ApiResponse<Any>>
 
     // ============ Order APIs ============
 
     @POST("orders/create")
-    suspend fun createOrder(
-        @Header("Authorization") token: String,
-        @Body request: CreateOrderRequest
-    ): Response<ApiResponse<OrderCreationResponse>>
+    suspend fun createOrder(@Body request: CreateOrderRequest): Response<ApiResponse<OrderCreationResponse>>
 
     @GET("orders")
-    suspend fun getOrders(@Header("Authorization") token: String): Response<ApiResponse<List<Order>>> 
+    suspend fun getOrders(): Response<ApiResponse<List<Order>>>  
 
     @GET("orders/{orderId}")
-    suspend fun getOrderById(
-        @Header("Authorization") token: String,
-        @Path("orderId") orderId: Int
-    ): Response<ApiResponse<Order>>
+    suspend fun getOrderById(@Path("orderId") orderId: Int): Response<ApiResponse<OrderWithItems>>
 
     @GET("orders/{orderId}/track")
-    suspend fun trackOrder(
-        @Header("Authorization") token: String,
-        @Path("orderId") orderId: Int
-    ): Response<ApiResponse<List<OrderStatusHistory>>> 
+    suspend fun trackOrder(@Path("orderId") orderId: Int): Response<ApiResponse<List<OrderStatusHistory>>>
 }

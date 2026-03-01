@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 
 /**
  * ViewModel for authentication operations
+ 
  */
 class AuthViewModel : ViewModel() {
 
@@ -92,12 +93,13 @@ class AuthViewModel : ViewModel() {
 
     /**
      * Get user profile
+     * Token is automatically injected by ApiClient interceptor
      */
-    fun getProfile(token: String) {
+    fun getProfile() {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                val response = repository.getProfile(token)
+                val response = repository.getProfile()
 
                 if (response.isSuccessful && response.body() != null) {
                     val apiResponse = response.body()!!

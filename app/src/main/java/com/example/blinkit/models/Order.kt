@@ -94,6 +94,17 @@ data class Order(
 }
 
 /**
+ * Wrapper for getOrderById API response which returns {order, items}
+ */
+data class OrderWithItems(
+    @SerializedName("order")
+    val order: Order,
+    
+    @SerializedName("items")
+    val items: List<OrderItem>
+)
+
+/**
  * Enum for order status
  */
 enum class OrderStatus {

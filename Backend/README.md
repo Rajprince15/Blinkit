@@ -1,111 +1,90 @@
-# Blinkit Backend API
+# Blinkit Clone - Backend API
 
-Backend server for Blinkit-style grocery delivery application.
+Node.js + Express.js backend for the Blinkit Clone grocery delivery application.
 
-## Technology Stack
+## 🚀 Features
 
-- **Runtime:** Node.js
-- **Framework:** Express.js
-- **Database:** MySQL 8.0
-- **Authentication:** JWT (JSON Web Tokens)
-- **Password Hashing:** bcrypt
+- RESTful API architecture
+- JWT-based authentication
+- MySQL database integration
+- Password hashing with bcrypt
+- CORS enabled for cross-origin requests
+- Request logging and error handling
+- Admin middleware for protected routes
 
-## Prerequisites
+## 📋 Prerequisites
 
-Before running this backend, make sure you have:
+- Node.js v18 or higher
+- MySQL 8.0
+- npm or yarn
 
-1. **Node.js** (v18 or higher)
+## ⚙️ Installation
+
+1. **Navigate to backend directory**
    ```bash
-   node --version
-   npm --version
+   cd Backend
    ```
 
-2. **MySQL 8.0**
+2. **Install dependencies**
    ```bash
-   mysql --version
+   npm install
    ```
 
-## Installation
+3. **Setup MySQL Database**
+   ```bash
+   mysql -u root -p
+   CREATE DATABASE blinkit_db;
+   USE blinkit_db;
+   SOURCE ../database.sql
+   ```
 
-### 1. Install Dependencies
+4. **Configure Environment Variables**
+   
+   Create a `.env` file in the Backend directory:
+   ```env
+   PORT=5000
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=your_mysql_password
+   DB_NAME=blinkit_db
+   JWT_SECRET=your_super_secret_jwt_key_here_change_in_production
+   ```
 
-```bash
-cd backend
-npm install
+5. **Run the server**
+   ```bash
+   npm start
+   ```
+
+   The server will start on `http://localhost:5000`
+
+## 📚 API Documentation
+
+### Base URL
+```
+http://localhost:5000/api
 ```
 
-### 2. Configure Environment Variables
+### Authentication
 
-The `.env` file is already created. Update these values if needed:
-
-```env
-# Server Configuration
-PORT=5000
-
-# Database Configuration
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_mysql_password
-DB_NAME=blinkit_db
-DB_PORT=3306
-
-# JWT Configuration
-JWT_SECRET=your_super_secret_jwt_key_change_this_in_production
-JWT_EXPIRES_IN=7d
+All authenticated endpoints require a JWT token in the Authorization header:
+```
+Authorization: Bearer <your_jwt_token>
 ```
 
-### 3. Set Up Database
+---
 
-**Step 1:** Start MySQL server
+## 🔐 Authentication APIs
 
-**Step 2:** Create database and import schema
+### 1. User Signup
+**POST** `/auth/signup`
 
-```bash
-mysql -u root -p
-```
-
-Then in MySQL prompt:
-
-```sql
-CREATE DATABASE blinkit_db;
-USE blinkit_db;
-SOURCE /path/to/database_schema.sql;
-```
-
-Or use this command directly:
-
-```bash
-mysql -u root -p < ../database_schema.sql
-```
-
-### 4. Run the Server
-
-**Development mode (with auto-reload):**
-```bash
-npm run dev
-```
-
-**Production mode:**
-```bash
-npm start
-```
-
-Server will start on: `http://localhost:5000`
-
-## API Endpoints
-
-### Authentication APIs
-
-#### 1. Signup
-```http
-POST /api/auth/signup
-Content-Type: application/json
-
+**Request Body:**
+```json
 {
   "name": "John Doe",
   "email": "john@example.com",
-  "password": "Test@123",
-  "phone": "9876543210"
+  "password": "password123",
+  "phone": "1234567890"
 }
 ```
 
@@ -113,25 +92,26 @@ Content-Type: application/json
 ```json
 {
   "success": true,
-  "message": "User registered successfully.",
+  "message": "User created successfully",
   "data": {
-    "userId": 1,
-    "name": "John Doe",
-    "email": "john@example.com",
-    "phone": "9876543210",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com"
+    }
   }
 }
 ```
 
-#### 2. Login
-```http
-POST /api/auth/login
-Content-Type: application/json
+### 2. User Login
+**POST** `/auth/login`
 
+**Request Body:**
+```json
 {
   "email": "john@example.com",
-  "password": "Test@123"
+  "password": "password123"
 }
 ```
 
@@ -139,21 +119,24 @@ Content-Type: application/json
 ```json
 {
   "success": true,
-  "message": "Login successful.",
+  "message": "Login successful",
   "data": {
-    "userId": 1,
-    "name": "John Doe",
-    "email": "john@example.com",
-    "phone": "9876543210",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com"
+    }
   }
 }
 ```
 
-#### 3. Get Profile (Protected)
-```http
-GET /api/auth/profile
-Authorization: Bearer YOUR_JWT_TOKEN
+### 3. Get Profile
+**GET** `/auth/profile` 🔒
+
+**Headers:**
+```
+Authorization: Bearer <token>
 ```
 
 **Response:**
@@ -164,191 +147,388 @@ Authorization: Bearer YOUR_JWT_TOKEN
     "id": 1,
     "name": "John Doe",
     "email": "john@example.com",
-    "phone": "9876543210",
-    "profile_image": null,
-    "created_at": "2025-08-15T10:30:00.000Z",
-    "last_login": "2025-08-15T12:00:00.000Z"
+    "phone": "1234567890"
   }
 }
 ```
 
-#### 4. Logout
-```http
-POST /api/auth/logout
-Authorization: Bearer YOUR_JWT_TOKEN
-```
+### 4. Logout
+**POST** `/auth/logout` 🔒
 
-### User Management APIs
+---
 
-#### 1. Get User Profile
-```http
-GET /api/users/profile
-Authorization: Bearer YOUR_JWT_TOKEN
-```
+## 📦 Product APIs
 
-#### 2. Update User Profile
-```http
-PUT /api/users/profile
-Authorization: Bearer YOUR_JWT_TOKEN
-Content-Type: application/json
+### 1. Get All Categories
+**GET** `/categories`
 
-{
-  "name": "John Updated",
-  "phone": "9999999999"
-}
-```
-
-## Testing with cURL
-
-### Test Signup
-```bash
-curl -X POST http://localhost:5000/api/auth/signup \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Test User",
-    "email": "test@example.com",
-    "password": "Test@123",
-    "phone": "9876543210"
-  }'
-```
-
-### Test Login
-```bash
-curl -X POST http://localhost:5000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "test@example.com",
-    "password": "Test@123"
-  }'
-```
-
-### Test Profile (Replace TOKEN with actual JWT)
-```bash
-curl -X GET http://localhost:5000/api/auth/profile \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
-```
-
-## Error Handling
-
-All API responses follow this structure:
-
-**Success Response:**
+**Response:**
 ```json
 {
   "success": true,
-  "message": "Operation successful",
-  "data": { ... }
+  "data": [
+    {
+      "id": 1,
+      "name": "Fruits & Vegetables",
+      "image": "fruits.jpg",
+      "icon": "🥬"
+    }
+  ]
 }
 ```
 
-**Error Response:**
+### 2. Get All Products
+**GET** `/products?page=1&limit=20`
+
+### 3. Get Featured Products
+**GET** `/products/featured?limit=10`
+
+### 4. Search Products
+**GET** `/products/search?q=milk`
+
+### 5. Get Products by Category
+**GET** `/products/category/:categoryId`
+
+### 6. Get Product Details
+**GET** `/products/:productId`
+
+---
+
+## 🛒 Cart APIs
+
+All cart APIs require authentication 🔒
+
+### 1. Get Cart
+**GET** `/cart`
+
+**Response:**
 ```json
 {
-  "success": false,
-  "message": "Error description"
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": 1,
+        "productId": 5,
+        "productName": "Fresh Milk",
+        "price": 50.00,
+        "quantity": 2,
+        "image": "milk.jpg"
+      }
+    ],
+    "subtotal": 100.00,
+    "totalItems": 2
+  }
 }
 ```
 
-## Common HTTP Status Codes
+### 2. Add to Cart
+**POST** `/cart/add`
 
-- `200` - Success
-- `201` - Created
-- `400` - Bad Request (validation error)
-- `401` - Unauthorized (invalid credentials)
-- `403` - Forbidden (invalid token)
-- `404` - Not Found
-- `409` - Conflict (duplicate entry)
-- `500` - Server Error
-
-## Project Structure
-
+**Request Body:**
+```json
+{
+  "productId": 5,
+  "quantity": 2
+}
 ```
-backend/
+
+### 3. Update Cart Item
+**PUT** `/cart/update/:cartItemId`
+
+**Request Body:**
+```json
+{
+  "quantity": 3
+}
+```
+
+### 4. Remove from Cart
+**DELETE** `/cart/remove/:cartItemId`
+
+### 5. Clear Cart
+**DELETE** `/cart/clear`
+
+---
+
+## 📍 Address APIs
+
+All address APIs require authentication 🔒
+
+### 1. Get All Addresses
+**GET** `/addresses`
+
+### 2. Add Address
+**POST** `/addresses`
+
+**Request Body:**
+```json
+{
+  "fullName": "John Doe",
+  "phoneNumber": "1234567890",
+  "addressLine1": "123 Main St",
+  "addressLine2": "Apt 4B",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "pinCode": "400001",
+  "addressType": "HOME"
+}
+```
+
+### 3. Update Address
+**PUT** `/addresses/:addressId`
+
+### 4. Delete Address
+**DELETE** `/addresses/:addressId`
+
+### 5. Set Default Address
+**PUT** `/addresses/:addressId/default`
+
+---
+
+## 📋 Order APIs
+
+All order APIs require authentication 🔒
+
+### 1. Create Order
+**POST** `/orders/create`
+
+**Request Body:**
+```json
+{
+  "addressId": 3,
+  "deliveryAddress": "123 Main St, Mumbai, Maharashtra, 400001",
+  "paymentMethod": "COD",
+  "items": [
+    {
+      "productId": 5,
+      "productName": "Fresh Milk",
+      "quantity": 2,
+      "price": 50.00,
+      "productImage": "milk.jpg"
+    }
+  ],
+  "totalAmount": 100.00
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Order placed",
+  "orderId": 15,
+  "orderNumber": "ORD1672934567890"
+}
+```
+
+### 2. Get All Orders
+**GET** `/orders`
+
+**Response:**
+```json
+{
+  "success": true,
+  "count": 5,
+  "data": [
+    {
+      "id": 15,
+      "orderNumber": "ORD1672934567890",
+      "totalAmount": 100.00,
+      "orderStatus": "PLACED",
+      "orderDate": "2025-08-15T10:30:00.000Z"
+    }
+  ]
+}
+```
+
+### 3. Get Order Details
+**GET** `/orders/:orderId`
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "order": {
+      "id": 15,
+      "orderNumber": "ORD1672934567890",
+      "totalAmount": 100.00,
+      "orderStatus": "OUT_FOR_DELIVERY",
+      "deliveryAddress": "123 Main St, Mumbai"
+    },
+    "items": [
+      {
+        "id": 1,
+        "productName": "Fresh Milk",
+        "quantity": 2,
+        "unitPrice": 50.00,
+        "totalPrice": 100.00
+      }
+    ]
+  }
+}
+```
+
+### 4. Track Order
+**GET** `/orders/:orderId/track`
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "orderId": 15,
+      "status": "PLACED",
+      "remarks": "Order received successfully",
+      "createdAt": "2025-08-15T10:30:00.000Z"
+    },
+    {
+      "id": 2,
+      "orderId": 15,
+      "status": "CONFIRMED",
+      "remarks": "Order confirmed by store",
+      "createdAt": "2025-08-15T10:45:00.000Z"
+    }
+  ]
+}
+```
+
+### 5. Update Order Status (Admin Only)
+**PUT** `/orders/:orderId/status` 🔒👨‍💼
+
+**Request Body:**
+```json
+{
+  "status": "CONFIRMED",
+  "remarks": "Order confirmed by store"
+}
+```
+
+**Valid Status Values:**
+- `PLACED`
+- `CONFIRMED`
+- `PACKED`
+- `OUT_FOR_DELIVERY`
+- `DELIVERED`
+- `CANCELLED`
+
+---
+
+## 🔐 Middleware
+
+### authenticateToken
+Verifies JWT token for protected routes.
+
+### authenticateAdmin
+Checks if user has admin privileges.
+- Admin users have email containing "admin" or role = "admin"
+
+---
+
+## 🗄️ Database Schema
+
+The database includes the following tables:
+- `users` - User accounts
+- `categories` - Product categories
+- `products` - Product catalog
+- `cart_items` - Shopping cart
+- `addresses` - User addresses
+- `orders` - Order headers
+- `order_items` - Order line items
+- `order_status_history` - Order tracking timeline
+
+See `database.sql` for complete schema.
+
+---
+
+## 🛠️ Development
+
+### Project Structure
+```
+Backend/
+├── server.js              # Main server file
+├── package.json           # Dependencies
+├── .env                   # Environment variables
 ├── config/
-│   └── database.js          # MySQL connection configuration
+│   └── database.js        # MySQL connection
 ├── controllers/
-│   ├── authController.js    # Authentication logic
-│   └── userController.js    # User management logic
-├── middleware/
-│   └── authMiddleware.js    # JWT authentication middleware
-├── models/
-│   └── db.js                # Database helper functions
+│   ├── authController.js
+│   ├── productController.js
+│   ├── cartController.js
+│   ├── addressController.js
+│   └── orderController.js
 ├── routes/
-│   ├── authRoutes.js        # Authentication routes
-│   └── userRoutes.js        # User routes
-├── .env                     # Environment variables
-├── server.js                # Main server file
-├── package.json             # Dependencies
-└── README.md                # This file
+│   ├── authRoutes.js
+│   ├── productRoutes.js
+│   ├── cartRoutes.js
+│   ├── addressRoutes.js
+│   └── orderRoutes.js
+├── middleware/
+│   └── authMiddleware.js
+└── models/
+    └── db.js              # Database helpers
 ```
 
-## Security Notes
+### Running in Development
+```bash
+npm run dev  # If nodemon is configured
+```
 
-1. **Change JWT Secret:** Update `JWT_SECRET` in `.env` before deploying to production
-2. **Password Requirements:** Minimum 6 characters (enforced in controller)
-3. **Password Storage:** Passwords are hashed using bcrypt with 10 salt rounds
-4. **Token Expiry:** JWT tokens expire after 7 days (configurable)
+### Testing APIs
+Use Postman, curl, or any API testing tool.
 
-## Troubleshooting
+Example with curl:
+```bash
+# Login
+curl -X POST http://localhost:5000/api/auth/login 
+  -H "Content-Type: application/json" 
+  -d '{"email":"test@example.com","password":"password123"}'
 
-### Database Connection Failed
+# Get products (with token)
+curl http://localhost:5000/api/products 
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
 
-1. Check if MySQL is running:
-   ```bash
-   sudo service mysql status
-   ```
+---
 
-2. Verify credentials in `.env` file
+## 🐛 Troubleshooting
 
-3. Make sure database exists:
-   ```bash
-   mysql -u root -p -e "SHOW DATABASES;"
-   ```
+### Database Connection Issues
+- Verify MySQL is running: `sudo systemctl status mysql`
+- Check credentials in `.env`
+- Ensure database exists: `SHOW DATABASES;`
 
 ### Port Already in Use
-
-Change the `PORT` in `.env` file to another port (e.g., 5001)
-
-### Dependencies Installation Failed
-
-Try clearing npm cache:
 ```bash
-npm cache clean --force
-npm install
+# Find process using port 5000
+lsof -i :5000
+# Kill the process
+kill -9 <PID>
 ```
 
-## Next Steps
-
-Phase 1 & 2 Complete! Phase 3 & 4 work has been started and APIs added below.
-
-### New APIs (Phase 3/4)
-
-- **Cart**
-  - `GET /api/cart` (auth) – get current user cart with item details and summary
-  - `POST /api/cart/add` (auth) – add item or increment existing quantity
-  - `PUT /api/cart/update/:cartItemId` (auth) – change quantity
-  - `DELETE /api/cart/remove/:cartItemId` (auth) – remove single item
-  - `DELETE /api/cart/clear` (auth) – empty user's cart
-
-- **Addresses**
-  - `GET /api/addresses` (auth) – list saved delivery addresses
-  - `POST /api/addresses` (auth) – add a new address
-  - `PUT /api/addresses/:addressId` (auth) – update address
-  - `DELETE /api/addresses/:addressId` (auth) – delete address
-  - `PUT /api/addresses/:addressId/default` (auth) – set a default address
-
-- **Orders**
-  - `POST /api/orders/create` (auth) – place a new order from cart/items
-  - `GET /api/orders` (auth) – fetch order history
-  - `GET /api/orders/:orderId` (auth) – get specific order with items
-  - `GET /api/orders/:orderId/track` (auth) – timeline of status updates
-
-Feel free to use the SQL samples to exercise these endpoints.
+### JWT Secret Error
+- Make sure `JWT_SECRET` is set in `.env`
+- Use a strong, random string for production
 
 ---
 
-**Developed by E1 Agent**
+## 📝 Notes
+
+- Change `JWT_SECRET` in production
+- Use HTTPS in production
+- Implement rate limiting for production
+- Add input sanitization
+- Configure proper CORS origins for production
 
 ---
 
-**Developed by E1 Agent**
+## 🤝 Contributing
+
+Contributions are welcome! Please follow coding standards and test thoroughly.
+
+---
+
+**Backend API Documentation - Blinkit Clone**

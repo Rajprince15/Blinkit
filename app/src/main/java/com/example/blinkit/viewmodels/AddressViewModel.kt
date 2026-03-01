@@ -8,6 +8,10 @@ import com.example.blinkit.models.Address
 import com.example.blinkit.repositories.AddressRepository
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for address operations
+ * Token is automatically injected by ApiClient interceptor
+ */
 class AddressViewModel : ViewModel() {
     private val repo = AddressRepository()
 
@@ -20,11 +24,11 @@ class AddressViewModel : ViewModel() {
     private val _loading = MutableLiveData<Boolean>(false)
     val loading: LiveData<Boolean> = _loading
 
-    fun loadAddresses(token: String) {
+    fun loadAddresses() {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                val resp = repo.getAddresses(token)
+                val resp = repo.getAddresses()
                 if (resp.isSuccessful && resp.body() != null) {
                     val api = resp.body()!!
                     if (api.success && api.data != null) {
@@ -43,16 +47,16 @@ class AddressViewModel : ViewModel() {
         }
     }
 
-    fun addAddress(token: String, address: Address) {
+    fun addAddress(address: Address) {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                val resp = repo.addAddress(token, address)
+                val resp = repo.addAddress(address)
                 if (resp.isSuccessful && resp.body() != null) {
                     val api = resp.body()!!
                     if (api.success) {
                         _operationResult.value = Result.success(api.data ?: Any())
-                        loadAddresses(token)
+                        loadAddresses()
                     } else {
                         _operationResult.value = Result.failure(Exception(api.message ?: "Failed"))
                     }
@@ -65,16 +69,16 @@ class AddressViewModel : ViewModel() {
         }
     }
 
-    fun updateAddress(token: String, addressId: Int, address: Address) {
+    fun updateAddress(addressId: Int, address: Address) {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                val resp = repo.updateAddress(token, addressId, address)
+                val resp = repo.updateAddress(addressId, address)
                 if (resp.isSuccessful && resp.body() != null) {
                     val api = resp.body()!!
                     if (api.success) {
                         _operationResult.value = Result.success(api.data ?: Any())
-                        loadAddresses(token)
+                        loadAddresses()
                     } else {
                         _operationResult.value = Result.failure(Exception(api.message ?: "Failed"))
                     }
@@ -87,16 +91,16 @@ class AddressViewModel : ViewModel() {
         }
     }
 
-    fun deleteAddress(token: String, addressId: Int) {
+    fun deleteAddress(addressId: Int) {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                val resp = repo.deleteAddress(token, addressId)
+                val resp = repo.deleteAddress(addressId)
                 if (resp.isSuccessful && resp.body() != null) {
                     val api = resp.body()!!
                     if (api.success) {
                         _operationResult.value = Result.success(api.data ?: Any())
-                        loadAddresses(token)
+                        loadAddresses()
                     } else {
                         _operationResult.value = Result.failure(Exception(api.message ?: "Failed"))
                     }
@@ -109,16 +113,16 @@ class AddressViewModel : ViewModel() {
         }
     }
 
-    fun setDefault(token: String, addressId: Int) {
+    fun setDefault(addressId: Int) {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                val resp = repo.setDefaultAddress(token, addressId)
+                val resp = repo.setDefaultAddress(addressId)
                 if (resp.isSuccessful && resp.body() != null) {
                     val api = resp.body()!!
                     if (api.success) {
                         _operationResult.value = Result.success(api.data ?: Any())
-                        loadAddresses(token)
+                        loadAddresses()
                     } else {
                         _operationResult.value = Result.failure(Exception(api.message ?: "Failed"))
                     }
