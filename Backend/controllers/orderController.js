@@ -125,7 +125,7 @@ const trackOrder = async (req, res) => {
     }
 
     const timeline = await Database.query(
-      'SELECT status, remarks, created_at FROM order_status_history WHERE order_id = ? ORDER BY created_at ASC',
+      'SELECT id, order_id, status, remarks, created_at FROM order_status_history WHERE order_id = ? ORDER BY created_at ASC',
       [orderId]
     );
 
@@ -135,10 +135,61 @@ const trackOrder = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error tracking order' });
   }
 };
+/**
+ * Update order status (Admin only)
+ */
+
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status, remarks } = req.body;
+
+    // Validate status
+    const validStatuses = ['PLACED', 'CONFIRMED', 'PACKED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid status. Valid statuses: ' + validStatuses.join(', ') 
+      });
+    }
+
+    // Check if order exists
+    const order = await Database.getOne(
+      'SELECT id, order_status FROM orders WHERE id = ?',
+      [orderId]
+    );
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    // Update order status
+    await Database.update(
+      'UPDATE orders SET order_status = ? WHERE id = ?',
+      [status, orderId]
+    );
+
+    // Insert status history
+    await Database.insert(
+      `INSERT INTO order_status_history (order_id, status, remarks)
+       VALUES (?, ?, ?)`,
+      [orderId, status, remarks || `Order status updated to ${status}`]
+    );
+
+    res.status(200).json({ 
+      success: true, 
+      message: 'Order status updated successfully',
+      data: { orderId, status }
+    });
+  } catch (error) {
+    console.error('Update order status error:', error);
+    res.status(500).json({ success: false, message: 'Server error updating order status' });
+  }
+};
 
 module.exports = {
   createOrder,
   getOrders,
   getOrderById,
-  trackOrder
+  trackOrder,
+  updateOrderStatus
 };

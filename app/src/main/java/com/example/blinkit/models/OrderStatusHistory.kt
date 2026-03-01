@@ -7,10 +7,10 @@ import com.google.gson.annotations.SerializedName
  */
 data class OrderStatusHistory(
     @SerializedName("id")
-    val id: Int,
+    val id: Int? = null,
     
     @SerializedName("order_id")
-    val orderId: Int,
+    val orderId: Int? = null,
     
     @SerializedName("status")
     val status: OrderStatus,
@@ -19,10 +19,7 @@ data class OrderStatusHistory(
     val remarks: String? = null,
     
     @SerializedName("created_at")
-    val createdAt: String,
-    
-    @SerializedName("completed")
-    val completed: Boolean = true
+    val createdAt: String
 )
 
 /**

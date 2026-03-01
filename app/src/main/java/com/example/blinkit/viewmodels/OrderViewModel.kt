@@ -6,54 +6,87 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blinkit.models.*
 import com.example.blinkit.repositories.OrderRepository
+import com.example.blinkit.utils.SharedPrefsManager
 import kotlinx.coroutines.launch
 
 class OrderViewModel : ViewModel() {
     private val repo = OrderRepository()
 
-    private val _orders = MutableLiveData<Result<List<Order>>>()
-    val orders: LiveData<Result<List<Order>>> = _orders
+    private val _orders = MutableLiveData<List<Order>>()
+    val orders: LiveData<List<Order>> = _orders
 
-    private val _currentOrder = MutableLiveData<Result<Order>>()
-    val currentOrder: LiveData<Result<Order>> = _currentOrder
+    private val _currentOrder = MutableLiveData<Order>()
+    val currentOrder: LiveData<Order> = _currentOrder
 
-    private val _tracking = MutableLiveData<Result<List<OrderStatusHistory>>>()
-    val tracking: LiveData<Result<List<OrderStatusHistory>>> = _tracking
+    private val _orderTimeline = MutableLiveData<List<OrderStatusHistory>>()
+    val orderTimeline: LiveData<List<OrderStatusHistory>> = _orderTimeline
 
     private val _operationResult = MutableLiveData<Result<Any>>()
     val operationResult: LiveData<Result<Any>> = _operationResult
 
-    private val _loading = MutableLiveData<Boolean>(false)
-    val loading: LiveData<Boolean> = _loading
+    private val _isLoading = MutableLiveData<Boolean>(false)
+    val isLoading: LiveData<Boolean> = _isLoading
 
-    fun fetchOrders(token: String) {
+    private val _error = MutableLiveData<String>()
+    val error: LiveData<String> = _error
+
+    fun getOrders() {
         viewModelScope.launch {
             try {
-                _loading.value = true
-                val resp = repo.getOrders(token)
+                _isLoading.value = true
+                _error.value = null
+                val resp = repo.getOrders()
                 if (resp.isSuccessful && resp.body() != null) {
                     val api = resp.body()!!
                     if (api.success && api.data != null) {
-                        _orders.value = Result.success(api.data)
+                        _orders.value = api.data
+
                     } else {
-                        _orders.value = Result.failure(Exception(api.message ?: "Failed to load orders"))
+                        _error.value = api.message ?: "Failed to load orders"
+
                     }
                 } else {
-                    _orders.value = Result.failure(Exception(resp.message()))
+                    _error.value = "Network error: ${resp.message()}"
+
                 }
             } catch (e: Exception) {
-                _orders.value = Result.failure(e)
+                error.value = e.message ?: "An error occurred"
             } finally {
-                _loading.value = false
+                _isLoading.value = false
             }
         }
     }
 
-    fun placeOrder(token: String, request: CreateOrderRequest) {
+    fun getOrderById(orderId: Int) {
         viewModelScope.launch {
             try {
-                _loading.value = true
-                val resp = repo.createOrder(token, request)
+                _isLoading.value = true
+                _error.value = null
+                val resp = repo.getOrderById(orderId)
+                if (resp.isSuccessful && resp.body() != null) {
+                    val api = resp.body()!!
+                    if (api.success && api.data != null) {
+                        _currentOrder.value = api.data.order
+                    } else {
+                        _error.value = api.message ?: "Failed to load order"
+                    }
+                } else {
+                    _error.value = "Network error: ${resp.message()}"
+                }
+            } catch (e: Exception) {
+                _error.value = e.message ?: "An error occurred"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun placeOrder(request: CreateOrderRequest) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                _error.value = null
+                val resp = repo.createOrder(request)
                 if (resp.isSuccessful && resp.body() != null) {
                     val api = resp.body()!!
                     if (api.success) {
@@ -61,34 +94,36 @@ class OrderViewModel : ViewModel() {
                     } else {
                         _operationResult.value = Result.failure(Exception(api.message ?: "Failed to create order"))
                     }
+                } else {
+                    _operationResult.value = Result.failure(Exception(resp.message()))
                 }
             } catch (e: Exception) {
                 _operationResult.value = Result.failure(e)
             } finally {
-                _loading.value = false
+                _isLoading.value = false
             }
         }
     }
 
-    fun trackOrder(token: String, orderId: Int) {
+    fun trackOrder(orderId: Int) {
         viewModelScope.launch {
             try {
-                _loading.value = true
-                val resp = repo.trackOrder(token, orderId)
+                _error.value = null
+                val resp = repo.trackOrder(orderId)
                 if (resp.isSuccessful && resp.body() != null) {
                     val api = resp.body()!!
                     if (api.success && api.data != null) {
-                        _tracking.value = Result.success(api.data)
+                        _orderTimeline.value = api.data
                     } else {
-                        _tracking.value = Result.failure(Exception(api.message ?: "Failed to track order"))
+                        _error.value = api.message ?: "Failed to track order"
                     }
                 } else {
-                    _tracking.value = Result.failure(Exception(resp.message()))
+                    _error.value = "Network error: ${resp.message()}"
                 }
             } catch (e: Exception) {
                 _tracking.value = Result.failure(e)
             } finally {
-                _loading.value = false
+                _error.value = e.message ?: "An error occurred"
             }
         }
     }

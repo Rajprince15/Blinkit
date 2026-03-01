@@ -1,4 +1,4 @@
-"package com.example.blinkit.activities
+package com.example.blinkit.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -174,4 +174,3 @@ class ProductListActivity : AppCompatActivity() {
         // TODO: Implement cart API call in Phase 4
     }
 }
-"

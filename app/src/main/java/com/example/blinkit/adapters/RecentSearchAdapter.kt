@@ -1,4 +1,4 @@
-"package com.example.blinkit.adapters
+package com.example.blinkit.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -55,4 +55,3 @@ class RecentSearchAdapter(
         }
     }
 }
-"

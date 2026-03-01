@@ -1,4 +1,4 @@
-"package com.example.blinkit.activities
+package com.example.blinkit.activities
 
 import android.graphics.Paint
 import android.os.Bundle
@@ -217,4 +217,3 @@ class ProductDetailActivity : AppCompatActivity() {
         binding.btnDecrease.isEnabled = quantity > minQty
     }
 }
-"

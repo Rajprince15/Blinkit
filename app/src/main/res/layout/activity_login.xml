@@ -43,9 +43,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:hint="@string/email"
-            style=\"@style/Widget.Blinkit.TextInputLayout\"
+            style="@style/Widget.Blinkit.TextInputLayout"
             app:startIconDrawable="@android:drawable/ic_dialog_email"
-            app:startIconTint=\"@color/primary\">
+            app:startIconTint="@color/primary">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_email"

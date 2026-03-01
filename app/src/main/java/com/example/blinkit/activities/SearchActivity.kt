@@ -1,4 +1,4 @@
-"package com.example.blinkit.activities
+package com.example.blinkit.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -202,4 +202,3 @@ class SearchActivity : AppCompatActivity() {
         searchRunnable?.let { searchHandler.removeCallbacks(it) }
     }
 }
-"

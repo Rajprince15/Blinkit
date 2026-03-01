@@ -28,6 +28,12 @@ data class CreateOrderRequest(
 data class OrderItemRequest(
     @SerializedName("product_id")
     val productId: Int,
+
+    @SerializedName("product_name")
+    val productName: String,
+    
+    @SerializedName("product_image")
+    val productImage: String? = null,
     
     @SerializedName("quantity")
     val quantity: Int,
