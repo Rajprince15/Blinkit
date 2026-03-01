@@ -7,7 +7,7 @@ plugins {
 android {
     namespace = "com.example.blinkit"
     compileSdk = 34
-    }
+    
 
     defaultConfig {
         applicationId = "com.example.blinkit"
@@ -58,6 +58,9 @@ dependencies {
 
     // RecyclerView
     implementation(libs.androidx.recyclerview)
+
+    // SwipeRefreshLayout
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     // Retrofit for networking
     implementation(libs.retrofit)

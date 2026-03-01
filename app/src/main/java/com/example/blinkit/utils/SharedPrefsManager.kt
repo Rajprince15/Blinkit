@@ -19,8 +19,10 @@ class SharedPrefsManager private constructor(context: Context) {
         private const val KEY_USER_PHONE = "user_phone"
         private const val KEY_IS_LOGGED_IN = "is_logged_in"
         private const val KEY_THEME = "app_theme"
+        private const val KEY_RECENT_SEARCHES = "recent_searches"
         private const val THEME_LIGHT = "light"
         private const val THEME_DARK = "dark"
+        private const val MAX_RECENT_SEARCHES = 10
 
         @Volatile
         private var instance: SharedPrefsManager? = null
@@ -50,6 +52,23 @@ class SharedPrefsManager private constructor(context: Context) {
         
         fun clearUserData(context: Context) {
             getInstance(context).clearUserData()
+            
+        }
+        // Recent Searches static methods
+        fun saveRecentSearch(context: Context, query: String) {
+            getInstance(context).saveRecentSearch(query)
+        }
+        
+        fun getRecentSearches(context: Context): List<String> {
+            return getInstance(context).getRecentSearches()
+        }
+        
+        fun removeRecentSearch(context: Context, query: String) {
+            getInstance(context).removeRecentSearch(query)
+        }
+        
+        fun clearRecentSearches(context: Context) {
+            getInstance(context).clearRecentSearches()
         }
     }
 
@@ -126,5 +145,48 @@ class SharedPrefsManager private constructor(context: Context) {
     // Clear all data
     fun clearAll() {
         prefs.edit().clear().apply()
+    }
+    // Save recent search query
+    fun saveRecentSearch(query: String) {
+        if (query.isBlank()) return
+        
+        val searches = getRecentSearches().toMutableList()
+        
+        // Remove if already exists (to move it to top)
+        searches.remove(query)
+        
+        // Add to beginning
+        searches.add(0, query)
+        
+        // Keep only MAX_RECENT_SEARCHES
+        val limitedSearches = searches.take(MAX_RECENT_SEARCHES)
+        
+        // Save as comma-separated string
+        val searchesString = limitedSearches.joinToString(\",\")
+        prefs.edit().putString(KEY_RECENT_SEARCHES, searchesString).apply()
+    }
+    
+    // Get recent searches
+    fun getRecentSearches(): List<String> {
+        val searchesString = prefs.getString(KEY_RECENT_SEARCHES, \"\") ?: \"\"
+        return if (searchesString.isEmpty()) {
+            emptyList()
+        } else {
+            searchesString.split(\",\").filter { it.isNotBlank() }
+        }
+    }
+    
+    // Remove a recent search
+    fun removeRecentSearch(query: String) {
+        val searches = getRecentSearches().toMutableList()
+        searches.remove(query)
+        
+        val searchesString = searches.joinToString(\",\")
+        prefs.edit().putString(KEY_RECENT_SEARCHES, searchesString).apply()
+    }
+    
+    // Clear all recent searches
+    fun clearRecentSearches() {
+        prefs.edit().remove(KEY_RECENT_SEARCHES).apply()
     }
 }

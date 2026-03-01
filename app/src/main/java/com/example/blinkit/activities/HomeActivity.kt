@@ -1,5 +1,5 @@
 package com.example.blinkit.activities
-
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -41,8 +41,12 @@ class HomeActivity : AppCompatActivity() {
     private fun setupRecyclerViews() {
         // Categories RecyclerView
         categoryAdapter = CategoryAdapter { category ->
-            Toast.makeText(this, "Selected: ${category.name}", Toast.LENGTH_SHORT).show()
-            // TODO: Navigate to ProductListActivity with categoryId
+            // Navigate to ProductListActivity with categoryId
+            val intent = Intent(this, ProductListActivity::class.java).apply {
+                putExtra(ProductListActivity.EXTRA_CATEGORY_ID, category.id)
+                putExtra(ProductListActivity.EXTRA_CATEGORY_NAME, category.name)
+            }
+            startActivity(intent)
         }
         
         binding.rvCategories.apply {
@@ -53,8 +57,11 @@ class HomeActivity : AppCompatActivity() {
         // Products RecyclerView
         productAdapter = ProductAdapter(
             onProductClick = { product ->
-                Toast.makeText(this, "Product: ${product.name}", Toast.LENGTH_SHORT).show()
-                // TODO: Navigate to ProductDetailActivity
+                // Navigate to ProductDetailActivity
+                val intent = Intent(this, ProductDetailActivity::class.java).apply {
+                    putExtra(ProductDetailActivity.EXTRA_PRODUCT_ID, product.id)
+                }
+                startActivity(intent)
             },
             onAddToCart = { product ->
                 Toast.makeText(this, "${product.name} added to cart", Toast.LENGTH_SHORT).show()
@@ -76,8 +83,9 @@ class HomeActivity : AppCompatActivity() {
         
         // Search
         binding.ivSearch.setOnClickListener {
-            Toast.makeText(this, "Search feature coming soon", Toast.LENGTH_SHORT).show()
-            // TODO: Navigate to SearchActivity
+            // Navigate to SearchActivity
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
         }
         
         // Bottom navigation

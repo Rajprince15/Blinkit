@@ -45,6 +45,24 @@
         <activity
             android:name=".activities.HomeActivity"
             android:exported="false" />
+        <!-- Product List Activity -->
+        <activity
+            android:name=\".activities.ProductListActivity\"
+            android:exported=\"false\"
+            android:parentActivityName=\".activities.HomeActivity\" />
+        
+        <!-- Product Detail Activity -->
+        <activity
+            android:name=\".activities.ProductDetailActivity\"
+            android:exported=\"false\"
+            android:parentActivityName=\".activities.HomeActivity\" />
+        
+        <!-- Search Activity -->
+        <activity
+            android:name=\".activities.SearchActivity\"
+            android:exported=\"false\"
+            android:windowSoftInputMode=\"adjustResize\"
+            android:parentActivityName=\".activities.HomeActivity\" />
         
         <!-- Old MainActivity (keeping for reference) -->
         <activity
