@@ -43,3 +43,26 @@ data class CancelOrderRequest(
     @SerializedName("cancellation_reason")
     val cancellationReason: String
 )
+/**
+ * Response when order is created
+ */
+data class OrderCreationResponse(
+    @SerializedName("order_id")
+    val orderId: Int? = null,
+    
+    @SerializedName("orderId")
+    val orderIdAlt: Int? = null,
+    
+    @SerializedName("order_number")
+    val orderNumber: String,
+    
+    @SerializedName("message")
+    val message: String? = null
+) {
+    /**
+     * Get order ID from either format
+     */
+    fun getOrderId(): Int {
+        return orderId ?: orderIdAlt ?: 0
+    }
+}

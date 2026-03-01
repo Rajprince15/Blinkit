@@ -106,6 +106,26 @@ const startServer = async () => {
       console.log('   GET    /api/products           - Get all products');
       console.log('   GET    /api/products/featured  - Get featured products');
       console.log('   GET    /api/products/search    - Search products');
+      console.log('');
+      console.log('   📦 Cart Endpoints:');
+      console.log('   GET    /api/cart               - Get user cart (auth required)');
+      console.log('   POST   /api/cart/add           - Add item to cart (auth required)');
+      console.log('   PUT    /api/cart/update/:id    - Update cart item (auth required)');
+      console.log('   DELETE /api/cart/remove/:id    - Remove from cart (auth required)');
+      console.log('   DELETE /api/cart/clear         - Clear cart (auth required)');
+      console.log('');
+      console.log('   📍 Address Endpoints:');
+      console.log('   GET    /api/addresses          - Get addresses (auth required)');
+      console.log('   POST   /api/addresses          - Add new address (auth required)');
+      console.log('   PUT    /api/addresses/:id      - Update address (auth required)');
+      console.log('   DELETE /api/addresses/:id      - Delete address (auth required)');
+      console.log('   PUT    /api/addresses/:id/default - Set default address (auth required)');
+      console.log('');
+      console.log('   🛒 Order Endpoints:');
+      console.log('   POST   /api/orders/create      - Place new order (auth required)');
+      console.log('   GET    /api/orders             - Get order history (auth required)');
+      console.log('   GET    /api/orders/:id         - Get order details (auth required)');
+      console.log('   GET    /api/orders/:id/track   - Track order status (auth required)');
       console.log('='.repeat(60) + '\n');
     });
   } catch (error) {

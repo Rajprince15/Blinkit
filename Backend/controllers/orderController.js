@@ -46,7 +46,14 @@ const createOrder = async (req, res) => {
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [insertId, pid, pname, pimage, qty, price, price * qty]
       );
+      
     }
+    // Insert initial order status into history for tracking
+    await Database.insert(
+      `INSERT INTO order_status_history (order_id, status, remarks)
+       VALUES (?, 'PLACED', 'Order received successfully')`,
+      [insertId]
+    );
 
     res.status(201).json({ success: true, message: 'Order placed', orderId: insertId, orderNumber });
   } catch (error) {

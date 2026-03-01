@@ -65,3 +65,23 @@ data class CartSummary(
         return "₹${String.format("%.2f", total)}"
     }
 }
+/**
+ * Response when item is added to cart
+ */
+data class CartItemResponse(
+    @SerializedName("cart_item_id")
+    val cartItemId: Int? = null,
+    
+    @SerializedName("cartItemId")
+    val cartItemIdAlt: Int? = null,
+    
+    @SerializedName("message")
+    val message: String? = null
+) {
+    /**
+     * Get the cart item ID from either format
+     */
+    fun getId(): Int {
+        return cartItemId ?: cartItemIdAlt ?: 0
+    }
+}

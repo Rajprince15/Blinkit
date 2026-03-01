@@ -7,38 +7,58 @@ const getCart = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const items = await Database.query(
-      `SELECT ci.id, ci.product_id, ci.quantity,
-              p.name as product_name, p.price, p.image_url,
-              (ci.quantity * p.price) as total_price
+    // Get cart items with full product details
+    const rawItems = await Database.query(
+      `SELECT ci.id as cart_item_id, ci.product_id, ci.quantity, ci.added_at, ci.updated_at,
+              p.id as p_id, p.category_id, p.name, p.description, p.brand, p.image_url, 
+              p.price, p.original_price, p.discount_percentage, p.unit, p.stock_quantity,
+              p.rating, p.total_reviews, p.is_featured, p.is_available,
+              (ci.quantity * p.price) as item_total
        FROM cart_items ci
        JOIN products p ON ci.product_id = p.id
        WHERE ci.user_id = ?`,
       [userId]
     );
 
-    // compute summary
-    const summary = items.reduce(
-      (acc, item) => {
-        acc.totalItems += item.quantity;
-        acc.subtotal += parseFloat(item.total_price);
-        return acc;
-      },
-      { totalItems: 0, subtotal: 0.0 }
-    );
+    // Restructure to match Android CartItem model with nested Product
+    const items = rawItems.map(item => ({
+      id: item.cart_item_id,
+      user_id: userId,
+      product_id: item.product_id,
+      quantity: item.quantity,
+      added_at: item.added_at,
+      updated_at: item.updated_at,
+      product: {
+        id: item.p_id,
+        category_id: item.category_id,
+        name: item.name,
+        description: item.description,
+        brand: item.brand,
+        image_url: item.image_url,
+        price: parseFloat(item.price),
+        original_price: item.original_price ? parseFloat(item.original_price) : null,
+        discount_percentage: item.discount_percentage,
+        unit: item.unit,
+        stock_quantity: item.stock_quantity,
+        rating: item.rating ? parseFloat(item.rating) : 0.0,
+        total_reviews: item.total_reviews,
+        is_featured: item.is_featured,
+        is_available: item.is_available
+      }
+    }));
 
-    // optionally add delivery fee and discount here
-    // snake_case fields for client
-    summary.delivery_fee = 0.0;
-    summary.discount_amount = 0.0;
+    // Compute summary
+    const summary = {
+      item_count: items.reduce((sum, item) => sum + item.quantity, 0),
+      subtotal: items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0),
+      delivery_fee: 0.0,
+      discount_amount: 0.0,
+      total_amount: 0.0,
+      items: items
+    };
     summary.total_amount = summary.subtotal + summary.delivery_fee - summary.discount_amount;
 
-    // embed items list inside summary for client convenience
-    summary.items = items;
-
-    // convert totalItems -> item_count for compatibility
-    summary.item_count = summary.totalItems;
-    delete summary.totalItems;
+    
     res.status(200).json({
       success: true,
       data: summary
