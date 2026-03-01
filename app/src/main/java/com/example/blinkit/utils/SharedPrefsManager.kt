@@ -10,7 +10,7 @@ class SharedPrefsManager private constructor(context: Context) {
 
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    companion object {
+        companion object {
         private const val PREFS_NAME = "blinkit_prefs"
         private const val KEY_TOKEN = "auth_token"
         private const val KEY_USER_ID = "user_id"
@@ -29,6 +29,27 @@ class SharedPrefsManager private constructor(context: Context) {
             return instance ?: synchronized(this) {
                 instance ?: SharedPrefsManager(context.applicationContext).also { instance = it }
             }
+        }
+        
+        // Static helper methods for convenience
+        fun saveToken(context: Context, token: String) {
+            getInstance(context).saveToken(token)
+        }
+        
+        fun getToken(context: Context): String? {
+            return getInstance(context).getToken()
+        }
+        
+        fun setDarkMode(context: Context, isDark: Boolean) {
+            getInstance(context).saveTheme(isDark)
+        }
+        
+        fun isDarkMode(context: Context): Boolean {
+            return getInstance(context).isDarkTheme()
+        }
+        
+        fun clearUserData(context: Context) {
+            getInstance(context).clearUserData()
         }
     }
 

@@ -1,29 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary Colors -->
+    <!-- Primary Brand Colors - Blinkit Green Theme -->
     <color name="primary">#4CAF50</color>
     <color name="primary_dark">#388E3C</color>
     <color name="primary_light">#C8E6C9</color>
     <color name="accent">#FF9800</color>
+    <color name="accent_dark">#F57C00</color>
 
     <!-- Background Colors -->
     <color name="background_light">#FFFFFF</color>
     <color name="background_dark">#121212</color>
     <color name="surface_light">#F5F5F5</color>
     <color name="surface_dark">#1E1E1E</color>
+    <color name="card_light">#FFFFFF</color>
+    <color name="card_dark">#2C2C2C</color>
 
     <!-- Text Colors -->
     <color name="text_primary_light">#212121</color>
     <color name="text_primary_dark">#FFFFFF</color>
     <color name="text_secondary_light">#757575</color>
     <color name="text_secondary_dark">#B0B0B0</color>
+    <color name="text_hint_light">#9E9E9E</color>
+    <color name="text_hint_dark">#707070</color>
 
-    <!-- Common Colors -->
+    <!-- Basic Colors -->
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- Gray Scale -->
     <color name="gray">#9E9E9E</color>
     <color name="gray_light">#E0E0E0</color>
-    <color name="transparent">#00000000</color>
+    <color name="gray_dark">#616161</color>
+    <color name="divider_light">#E0E0E0</color>
+    <color name="divider_dark">#3C3C3C</color>
 
     <!-- Status Colors -->
     <color name="success">#4CAF50</color>
@@ -31,8 +41,32 @@
     <color name="warning">#FF9800</color>
     <color name="info">#2196F3</color>
 
-    <!-- Product Colors -->
+    <!-- Product & Shopping Colors -->
     <color name="discount_bg">#FFEBEE</color>
     <color name="discount_text">#C62828</color>
     <color name="rating_star">#FFB300</color>
+    <color name="price_color">#212121</color>
+    <color name="original_price">#9E9E9E</color>
+    <color name="in_stock">#4CAF50</color>
+    <color name="out_of_stock">#F44336</color>
+
+    <!-- Button Colors -->
+    <color name="button_primary">#4CAF50</color>
+    <color name="button_primary_pressed">#388E3C</color>
+    <color name="button_secondary">#FF9800</color>
+    <color name="button_disabled">#BDBDBD</color>
+
+    <!-- Order Status Colors -->
+    <color name="order_placed">#2196F3</color>
+    <color name="order_confirmed">#FF9800</color>
+    <color name="order_packed">#9C27B0</color>
+    <color name="order_out_for_delivery">#FF5722</color>
+    <color name="order_delivered">#4CAF50</color>
+    <color name="order_cancelled">#F44336</color>
+
+    <!-- Special Colors -->
+    <color name="shimmer_base">#DDDDDD</color>
+    <color name="shimmer_highlight">#F5F5F5</color>
+    <color name="overlay">#80000000</color>
+    <color name="splash_background">#4CAF50</color>
 </resources>
