@@ -9,6 +9,7 @@
     <string name="login">Login</string>
     <string name="signup">Sign Up</string>
     <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
     <string name="create_account">Create Account</string>
     <string name="welcome_back">Welcome Back!</string>
     <string name="welcome_to_blinkit">Welcome to Blinkit</string>
@@ -122,7 +123,6 @@
     <string name="state">State</string>
     <string name="pincode">PIN Code</string>
     <string name="address_type">Address Type</string>
-    <string name="home">Home</string>
     <string name="work">Work</string>
     <string name="other">Other</string>
     <string name="payment_method">Payment Method</string>
