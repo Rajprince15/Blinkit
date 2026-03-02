@@ -174,11 +174,11 @@ class ProductDetailActivity : AppCompatActivity() {
         // Stock status
         if (product.isInStock()) {
             binding.tvStockStatus.text = getString(R.string.in_stock)
-            binding.tvStockStatus.setTextColor(getColor(R.color.in_stock))
+            binding.tvStockStatus.setTextColor(getColor(R.color.color_in_stock))
             binding.btnAddToCart.isEnabled = true
         } else {
             binding.tvStockStatus.text = getString(R.string.out_of_stock)
-            binding.tvStockStatus.setTextColor(getColor(R.color.out_of_stock))
+            binding.tvStockStatus.setTextColor(getColor(R.color.color_out_of_stock))
             binding.btnAddToCart.isEnabled = false
         }
 

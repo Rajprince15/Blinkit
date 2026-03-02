@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.blinkit.R
 import com.example.blinkit.databinding.ActivitySignupBinding
-import com.example.blinkit.models.SignupRequest
 import com.example.blinkit.utils.SharedPrefsManager
 import com.example.blinkit.viewmodels.AuthViewModel
 
@@ -117,8 +116,8 @@ class SignupActivity : AppCompatActivity() {
     }
     
     private fun performSignup(name: String, email: String, phone: String, password: String) {
-        val signupRequest = SignupRequest(name, email, phone, password)
-        authViewModel.signup(signupRequest)
+        // Fix: AuthViewModel.signup expects (name, email, password, phone)
+        authViewModel.signup(name, email, password, phone)
     }
     
     private fun observeViewModel() {

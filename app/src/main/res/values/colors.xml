@@ -50,8 +50,8 @@
     <color name="rating_star">#FFB300</color>
     <color name="price_color">#212121</color>
     <color name="original_price">#9E9E9E</color>
-    <color name="in_stock">#4CAF50</color>
-    <color name="out_of_stock">#F44336</color>
+    <color name="color_in_stock">#4CAF50</color>
+    <color name="color_out_of_stock">#F44336</color>
 
     <!-- Button Colors -->
     <color name="button_primary">#4CAF50</color>
@@ -60,7 +60,7 @@
     <color name="button_disabled">#BDBDBD</color>
 
     <!-- Order Status Colors -->
-    <color name="order_placed">#2196F3</color>
+    <color name="color_order_placed">#2196F3</color>
     <color name="order_confirmed">#FF9800</color>
     <color name="order_packed">#9C27B0</color>
     <color name="order_out_for_delivery">#FF5722</color>

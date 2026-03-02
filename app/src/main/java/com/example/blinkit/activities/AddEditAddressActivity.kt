@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.blinkit.databinding.ActivityAddEditAddressBinding
 import com.example.blinkit.models.Address
+import com.example.blinkit.models.AddressType
 import com.example.blinkit.viewmodels.AddressViewModel
 import com.google.gson.Gson
 
@@ -96,7 +97,7 @@ class AddEditAddressActivity : AppCompatActivity() {
                 state = state,
                 pincode = zipcode,
                 country = country,
-                addressType = Address.AddressType.HOME,
+                addressType = AddressType.HOME,
                 isDefault = isDefault
             )
             viewModel.addAddress(newAddress)
