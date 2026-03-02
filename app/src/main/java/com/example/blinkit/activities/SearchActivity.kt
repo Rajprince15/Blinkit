@@ -62,7 +62,7 @@ class SearchActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val query = s?.toString()?.trim() ?: \"\"
+                val query = s?.toString()?.trim() ?: ""
                 
                 // Show/hide clear button
                 binding.ivClear.visibility = if (query.isNotEmpty()) View.VISIBLE else View.GONE
@@ -119,7 +119,7 @@ class SearchActivity : AppCompatActivity() {
                 startActivity(intent)
             },
             onAddToCart = { product ->
-                Toast.makeText(this, \"${product.name} added to cart\", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "${product.name} added to cart", Toast.LENGTH_SHORT).show()
             }
         )
 
@@ -142,7 +142,7 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
             result.onFailure { error ->
-                Toast.makeText(this, error.message ?: \"Search failed\", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, error.message ?: "Search failed", Toast.LENGTH_SHORT).show()
                 showEmptyState()
             }
         }
@@ -187,7 +187,7 @@ class SearchActivity : AppCompatActivity() {
         binding.layoutSearchResults.visibility = View.VISIBLE
         binding.layoutEmpty.visibility = View.GONE
         
-        binding.tvResultsCount.text = \"${products.size} Results Found\"
+        binding.tvResultsCount.text = "${products.size} Results Found"
         productAdapter.submitList(products)
     }
 

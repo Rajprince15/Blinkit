@@ -26,7 +26,7 @@ class ProductDetailActivity : AppCompatActivity() {
     private var quantity: Int = 1
 
     companion object {
-        const val EXTRA_PRODUCT_ID = \"product_id\"
+        const val EXTRA_PRODUCT_ID = "product_id"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +36,7 @@ class ProductDetailActivity : AppCompatActivity() {
 
         val productId = intent.getIntExtra(EXTRA_PRODUCT_ID, -1)
         if (productId == -1) {
-            Toast.makeText(this, \"Invalid product\", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Invalid product", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -70,7 +70,7 @@ class ProductDetailActivity : AppCompatActivity() {
                 startActivity(intent)
             },
             onAddToCart = { product ->
-                Toast.makeText(this, \"${product.name} added to cart\", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "${product.name} added to cart", Toast.LENGTH_SHORT).show()
             }
         )
 
@@ -95,7 +95,7 @@ class ProductDetailActivity : AppCompatActivity() {
                 quantity++
                 updateQuantityUI()
             } else {
-                Toast.makeText(this, \"Maximum quantity: $maxQty\", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Maximum quantity: $maxQty", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -105,12 +105,11 @@ class ProductDetailActivity : AppCompatActivity() {
                 if (product.isInStock()) {
                     Toast.makeText(
                         this,
-                        \"${product.name} (x$quantity) added to cart\",
+                        "${product.name} (x$quantity) added to cart",
                         Toast.LENGTH_SHORT
                     ).show()
-                    // TODO: Implement cart API call in Phase 4
                 } else {
-                    Toast.makeText(this, \"Product is out of stock\", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Product is out of stock", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -129,7 +128,7 @@ class ProductDetailActivity : AppCompatActivity() {
                 productViewModel.loadProductsByCategory(product.categoryId)
             }
             result.onFailure { error ->
-                Toast.makeText(this, error.message ?: \"Failed to load product\", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, error.message ?: "Failed to load product", Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
@@ -161,7 +160,7 @@ class ProductDetailActivity : AppCompatActivity() {
 
         // Product info
         binding.tvProductName.text = product.name
-        binding.tvBrand.text = product.brand ?: \"\"
+        binding.tvBrand.text = product.brand ?: ""
         
         // Rating
         binding.tvRating.text = product.rating.toString()
@@ -170,7 +169,7 @@ class ProductDetailActivity : AppCompatActivity() {
         } else {
             getString(R.string.reviews, product.totalReviews)
         }
-        binding.tvReviews.text = \"($reviewsText)\"
+        binding.tvReviews.text = "($reviewsText)"
 
         // Stock status
         if (product.isInStock()) {
@@ -197,13 +196,13 @@ class ProductDetailActivity : AppCompatActivity() {
             binding.tvDiscount.visibility = View.GONE
         }
 
-        binding.tvUnit.text = \"Per ${product.unit}\"
+        binding.tvUnit.text = "Per ${product.unit}"
 
         // Description
-        binding.tvDescription.text = product.description ?: \"No description available\"
+        binding.tvDescription.text = product.description ?: "No description available"
 
         // Quantity limit
-        binding.tvQuantityLimit.text = \"(Max: ${product.maxOrderQuantity})\"
+        binding.tvQuantityLimit.text = "(Max: ${product.maxOrderQuantity})"
         
         // Reset quantity to min
         quantity = product.minOrderQuantity

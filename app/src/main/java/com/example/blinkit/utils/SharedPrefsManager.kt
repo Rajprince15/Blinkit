@@ -10,7 +10,7 @@ class SharedPrefsManager private constructor(context: Context) {
 
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-        companion object {
+    companion object {
         private const val PREFS_NAME = "blinkit_prefs"
         private const val KEY_TOKEN = "auth_token"
         private const val KEY_USER_ID = "user_id"
@@ -162,17 +162,17 @@ class SharedPrefsManager private constructor(context: Context) {
         val limitedSearches = searches.take(MAX_RECENT_SEARCHES)
         
         // Save as comma-separated string
-        val searchesString = limitedSearches.joinToString(\",\")
+        val searchesString = limitedSearches.joinToString(",")
         prefs.edit().putString(KEY_RECENT_SEARCHES, searchesString).apply()
     }
     
     // Get recent searches
     fun getRecentSearches(): List<String> {
-        val searchesString = prefs.getString(KEY_RECENT_SEARCHES, \"\") ?: \"\"
+        val searchesString = prefs.getString(KEY_RECENT_SEARCHES, "") ?: ""
         return if (searchesString.isEmpty()) {
             emptyList()
         } else {
-            searchesString.split(\",\").filter { it.isNotBlank() }
+            searchesString.split(",").filter { it.isNotBlank() }
         }
     }
     
@@ -181,7 +181,7 @@ class SharedPrefsManager private constructor(context: Context) {
         val searches = getRecentSearches().toMutableList()
         searches.remove(query)
         
-        val searchesString = searches.joinToString(\",\")
+        val searchesString = searches.joinToString(",")
         prefs.edit().putString(KEY_RECENT_SEARCHES, searchesString).apply()
     }
     

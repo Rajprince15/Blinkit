@@ -22,12 +22,12 @@ class ProductListActivity : AppCompatActivity() {
     private lateinit var productViewModel: ProductViewModel
     private lateinit var productAdapter: ProductAdapter
     private var categoryId: Int = -1
-    private var categoryName: String = \"\"
+    private var categoryName: String = ""
     private var currentProducts: List<Product> = emptyList()
 
     companion object {
-        const val EXTRA_CATEGORY_ID = \"category_id\"
-        const val EXTRA_CATEGORY_NAME = \"category_name\"
+        const val EXTRA_CATEGORY_ID = "category_id"
+        const val EXTRA_CATEGORY_NAME = "category_name"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +37,7 @@ class ProductListActivity : AppCompatActivity() {
 
         // Get category info from intent
         categoryId = intent.getIntExtra(EXTRA_CATEGORY_ID, -1)
-        categoryName = intent.getStringExtra(EXTRA_CATEGORY_NAME) ?: \"Products\"
+        categoryName = intent.getStringExtra(EXTRA_CATEGORY_NAME) ?: "Products"
 
         setupToolbar()
         setupRecyclerView()
@@ -127,7 +127,7 @@ class ProductListActivity : AppCompatActivity() {
                 showProducts(products)
             }
             result.onFailure { error ->
-                showError(error.message ?: \"Failed to load products\")
+                showError(error.message ?: "Failed to load products")
             }
         }
 
@@ -170,7 +170,6 @@ class ProductListActivity : AppCompatActivity() {
     }
 
     private fun addToCart(product: Product) {
-        Toast.makeText(this, \"${product.name} added to cart\", Toast.LENGTH_SHORT).show()
-        // TODO: Implement cart API call in Phase 4
+        Toast.makeText(this, "${product.name} added to cart", Toast.LENGTH_SHORT).show()
     }
 }
