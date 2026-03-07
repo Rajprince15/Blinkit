@@ -32,41 +32,50 @@ class SharedPrefsManager private constructor(context: Context) {
                 instance ?: SharedPrefsManager(context.applicationContext).also { instance = it }
             }
         }
-        
+
         // Static helper methods for convenience
         fun saveToken(context: Context, token: String) {
             getInstance(context).saveToken(token)
         }
-        
+
         fun getToken(context: Context): String? {
             return getInstance(context).getToken()
         }
-        
+
         fun setDarkMode(context: Context, isDark: Boolean) {
             getInstance(context).saveTheme(isDark)
         }
-        
+
         fun isDarkMode(context: Context): Boolean {
             return getInstance(context).isDarkTheme()
         }
-        
+
         fun clearUserData(context: Context) {
             getInstance(context).clearUserData()
-            
         }
+
+        // ✅ FIX #4: Added missing static methods
+        fun saveTheme(context: Context, isDark: Boolean) {
+            getInstance(context).saveTheme(isDark)
+        }
+
+        fun clearToken(context: Context) {
+            getInstance(context).prefs.edit().remove(KEY_TOKEN).apply()
+        }
+
         // Recent Searches static methods
         fun saveRecentSearch(context: Context, query: String) {
             getInstance(context).saveRecentSearch(query)
         }
-        
+
         fun getRecentSearches(context: Context): List<String> {
             return getInstance(context).getRecentSearches()
         }
-        
+
         fun removeRecentSearch(context: Context, query: String) {
             getInstance(context).removeRecentSearch(query)
         }
-        
+
         fun clearRecentSearches(context: Context) {
             getInstance(context).clearRecentSearches()
         }
@@ -146,26 +155,27 @@ class SharedPrefsManager private constructor(context: Context) {
     fun clearAll() {
         prefs.edit().clear().apply()
     }
+
     // Save recent search query
     fun saveRecentSearch(query: String) {
         if (query.isBlank()) return
-        
+
         val searches = getRecentSearches().toMutableList()
-        
+
         // Remove if already exists (to move it to top)
         searches.remove(query)
-        
+
         // Add to beginning
         searches.add(0, query)
-        
+
         // Keep only MAX_RECENT_SEARCHES
         val limitedSearches = searches.take(MAX_RECENT_SEARCHES)
-        
+
         // Save as comma-separated string
         val searchesString = limitedSearches.joinToString(",")
         prefs.edit().putString(KEY_RECENT_SEARCHES, searchesString).apply()
     }
-    
+
     // Get recent searches
     fun getRecentSearches(): List<String> {
         val searchesString = prefs.getString(KEY_RECENT_SEARCHES, "") ?: ""
@@ -175,16 +185,16 @@ class SharedPrefsManager private constructor(context: Context) {
             searchesString.split(",").filter { it.isNotBlank() }
         }
     }
-    
+
     // Remove a recent search
     fun removeRecentSearch(query: String) {
         val searches = getRecentSearches().toMutableList()
         searches.remove(query)
-        
+
         val searchesString = searches.joinToString(",")
         prefs.edit().putString(KEY_RECENT_SEARCHES, searchesString).apply()
     }
-    
+
     // Clear all recent searches
     fun clearRecentSearches() {
         prefs.edit().remove(KEY_RECENT_SEARCHES).apply()

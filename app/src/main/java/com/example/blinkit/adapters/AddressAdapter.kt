@@ -22,8 +22,17 @@ class AddressAdapter(
         private val btnDelete = v.findViewById<android.widget.ImageButton>(R.id.btnDelete)
 
         fun bind(address: Address) {
-            tvName.text = address.name
-            tvAddress.text = "${address.line1}, ${address.line2}, ${address.city}, ${address.state} - ${address.zipcode}, ${address.country}"
+            // ✅ FIX #5: Fixed property names to match Address model
+            tvName.text = address.fullName
+
+            // Build address string with null-safe handling
+            val addressLine2Part = if (!address.addressLine2.isNullOrBlank()) {
+                ", ${address.addressLine2}"
+            } else {
+                ""
+            }
+            tvAddress.text = "${address.addressLine1}$addressLine2Part, ${address.city}, ${address.state} - ${address.pincode}, ${address.country}"
+
             tvLabelDefault.visibility = if (address.isDefault) View.VISIBLE else View.GONE
 
             btnEdit.setOnClickListener { onEdit(address) }

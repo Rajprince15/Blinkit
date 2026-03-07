@@ -43,12 +43,16 @@ class CartAdapter(
         private val btnRemove: View = view.findViewById(R.id.btnRemove)
 
         fun bind(item: CartItem) {
-            tvName.text = item.productName
-            tvPrice.text = "₹${item.price}"
+            // ✅ FIX #6: Access properties through nested product object
+            tvName.text = item.product?.name ?: "Unknown Product"
+            tvPrice.text = "₹${item.product?.price ?: 0.0}"
             tvQty.text = item.quantity.toString()
+
+            // ✅ FIX #7: Use placeholder drawable that exists
             Glide.with(itemView.context)
-                .load(item.imageUrl)
+                .load(item.product?.imageUrl)
                 .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
                 .into(ivImage)
 
             btnIncrease.setOnClickListener {
