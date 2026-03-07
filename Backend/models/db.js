@@ -2,13 +2,15 @@ const { promisePool } = require('../config/database');
 
 /**
  * Database helper functions for common operations
+ * FIXED: Using query() instead of execute() for better LIMIT/OFFSET compatibility
  */
 
 class Database {
   // Execute query with parameters
   static async query(sql, params = []) {
     try {
-      const [results] = await promisePool.execute(sql, params);
+      // Use query() instead of execute() to avoid LIMIT/OFFSET type issues
+      const [results] = await promisePool.query(sql, params);
       return results;
     } catch (error) {
       console.error('Database query error:', error);
@@ -19,7 +21,7 @@ class Database {
   // Get single row
   static async getOne(sql, params = []) {
     try {
-      const [results] = await promisePool.execute(sql, params);
+      const [results] = await promisePool.query(sql, params);
       return results[0] || null;
     } catch (error) {
       console.error('Database getOne error:', error);
@@ -30,7 +32,7 @@ class Database {
   // Get all rows
   static async getAll(sql, params = []) {
     try {
-      const [results] = await promisePool.execute(sql, params);
+      const [results] = await promisePool.query(sql, params);
       return results;
     } catch (error) {
       console.error('Database getAll error:', error);
@@ -41,7 +43,7 @@ class Database {
   // Insert and return inserted ID
   static async insert(sql, params = []) {
     try {
-      const [result] = await promisePool.execute(sql, params);
+      const [result] = await promisePool.query(sql, params);
       return result.insertId;
     } catch (error) {
       console.error('Database insert error:', error);
@@ -52,7 +54,7 @@ class Database {
   // Update and return affected rows
   static async update(sql, params = []) {
     try {
-      const [result] = await promisePool.execute(sql, params);
+      const [result] = await promisePool.query(sql, params);
       return result.affectedRows;
     } catch (error) {
       console.error('Database update error:', error);
@@ -63,7 +65,7 @@ class Database {
   // Delete and return affected rows
   static async delete(sql, params = []) {
     try {
-      const [result] = await promisePool.execute(sql, params);
+      const [result] = await promisePool.query(sql, params);
       return result.affectedRows;
     } catch (error) {
       console.error('Database delete error:', error);

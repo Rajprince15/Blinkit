@@ -43,13 +43,22 @@ const getAllProducts = async (req, res) => {
 
 /**
  * Get Products by Category
+ * FIX: Convert categoryId to integer to match database type
  */
 const getProductsByCategory = async (req, res) => {
   try {
-    const { categoryId } = req.params;
+    const categoryId = parseInt(req.params.categoryId); // FIX: Parse categoryId as integer
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const offset = (page - 1) * limit;
+
+    // Validate categoryId
+    if (isNaN(categoryId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid category ID.'
+      });
+    }
 
     const products = await Database.query(
       `SELECT p.*, c.name as category_name
@@ -77,10 +86,19 @@ const getProductsByCategory = async (req, res) => {
 
 /**
  * Get Product by ID
+ * FIX: Convert productId to integer
  */
 const getProductById = async (req, res) => {
   try {
-    const { productId } = req.params;
+    const productId = parseInt(req.params.productId); // FIX: Parse productId as integer
+
+    // Validate productId
+    if (isNaN(productId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid product ID.'
+      });
+    }
 
     const product = await Database.getOne(
       `SELECT p.*, c.name as category_name
