@@ -1,6 +1,32 @@
 const Database = require('../models/db');
 
 /**
+ * Helper function to convert MySQL TINYINT boolean fields to actual booleans
+ */
+const convertBooleanFields = (obj) => {
+  if (!obj) return obj;
+  
+  // List of boolean fields in the products table
+  const booleanFields = ['is_featured', 'is_available'];
+  
+  booleanFields.forEach(field => {
+    if (obj.hasOwnProperty(field)) {
+      obj[field] = Boolean(obj[field]);
+    }
+  });
+  
+  return obj;
+};
+
+/**
+ * Convert boolean fields for an array of objects
+ */
+const convertBooleanFieldsArray = (arr) => {
+  if (!Array.isArray(arr)) return arr;
+  return arr.map(item => convertBooleanFields(item));
+};
+
+/**
  * Get All Products with Pagination
  */
 const getAllProducts = async (req, res) => {
@@ -30,7 +56,7 @@ const getAllProducts = async (req, res) => {
       total: countResult.total,
       page: page,
       totalPages: Math.ceil(countResult.total / limit),
-      data: products
+      data: convertBooleanFieldsArray(products) // Convert boolean fields
     });
   } catch (error) {
     console.error('Get all products error:', error);
@@ -43,11 +69,10 @@ const getAllProducts = async (req, res) => {
 
 /**
  * Get Products by Category
- * FIX: Convert categoryId to integer to match database type
  */
 const getProductsByCategory = async (req, res) => {
   try {
-    const categoryId = parseInt(req.params.categoryId); // FIX: Parse categoryId as integer
+    const categoryId = parseInt(req.params.categoryId);
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const offset = (page - 1) * limit;
@@ -73,7 +98,7 @@ const getProductsByCategory = async (req, res) => {
     res.status(200).json({
       success: true,
       count: products.length,
-      data: products
+      data: convertBooleanFieldsArray(products) // Convert boolean fields
     });
   } catch (error) {
     console.error('Get products by category error:', error);
@@ -86,11 +111,10 @@ const getProductsByCategory = async (req, res) => {
 
 /**
  * Get Product by ID
- * FIX: Convert productId to integer
  */
 const getProductById = async (req, res) => {
   try {
-    const productId = parseInt(req.params.productId); // FIX: Parse productId as integer
+    const productId = parseInt(req.params.productId);
 
     // Validate productId
     if (isNaN(productId)) {
@@ -117,7 +141,7 @@ const getProductById = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: product
+      data: convertBooleanFields(product) // Convert boolean fields
     });
   } catch (error) {
     console.error('Get product by ID error:', error);
@@ -133,7 +157,7 @@ const getProductById = async (req, res) => {
  */
 const searchProducts = async (req, res) => {
   try {
-    const { q } = req.query; // search query
+    const { q } = req.query;
 
     if (!q || q.trim() === '') {
       return res.status(400).json({
@@ -158,7 +182,7 @@ const searchProducts = async (req, res) => {
     res.status(200).json({
       success: true,
       count: products.length,
-      data: products
+      data: convertBooleanFieldsArray(products) // Convert boolean fields
     });
   } catch (error) {
     console.error('Search products error:', error);
@@ -189,7 +213,7 @@ const getFeaturedProducts = async (req, res) => {
     res.status(200).json({
       success: true,
       count: products.length,
-      data: products
+      data: convertBooleanFieldsArray(products) // Convert boolean fields
     });
   } catch (error) {
     console.error('Get featured products error:', error);
