@@ -42,8 +42,8 @@ const getCart = async (req, res) => {
         stock_quantity: item.stock_quantity,
         rating: item.rating ? parseFloat(item.rating) : 0.0,
         total_reviews: item.total_reviews,
-        is_featured: item.is_featured,
-        is_available: item.is_available
+        is_featured: Boolean(item.is_featured),
+        is_available: Boolean(item.is_available)
       }
     }));
 
