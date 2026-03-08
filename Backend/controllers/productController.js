@@ -29,7 +29,7 @@ const convertBooleanFieldsArray = (arr) => {
 /**
  * Get All Products with Pagination
  */
-const getAllProducts = async (req, res) => {
+
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
