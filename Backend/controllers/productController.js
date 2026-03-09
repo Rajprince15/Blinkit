@@ -20,11 +20,6 @@ const convertBooleanFields = (obj) => {
 
 /**
  * Convert boolean fields for an array of objects
- */
-const convertBooleanFieldsArray = (arr) => {
-  if (!Array.isArray(arr)) return arr;
-  return arr.map(item => convertBooleanFields(item));
-};
 
 /**
  * Get All Products with Pagination
